@@ -15,6 +15,7 @@ public class MqttObj {
             m_msg = value;
         }
     }
+
     private string m_topic;
     public string topic
     {
@@ -22,6 +23,7 @@ public class MqttObj {
         {
             return m_topic;
         }
+        
         set
         {
             if (m_topic == value) return;
@@ -55,6 +57,7 @@ public class MqttManager : M2MqttUnityClient
         {
             return m_isConnected;
         }
+
         set
         {
             if (m_isConnected == value) return;
@@ -68,7 +71,6 @@ public class MqttManager : M2MqttUnityClient
     public event OnConnectionSucceededDelegate OnConnectionSucceeded;
     public delegate void OnConnectionSucceededDelegate(bool isConnected);
 
-    // a list to store the mqttObj received
     private List<MqttObj> eventMessages = new List<MqttObj>();
 
     protected override void Start()
@@ -80,7 +82,6 @@ public class MqttManager : M2MqttUnityClient
     {
         base.Update(); // call ProcessMqttEvents()
     }
-
 
     public void Publish(string topic, string message)
     {
@@ -129,7 +130,7 @@ public class MqttManager : M2MqttUnityClient
     {
         foreach (string item in topicSubscribe) //subscribe to all the topics of the Public List topicSubscribe, not most efficient way (e.g. JSON object works better), but it might be useful in certain circumstances 
         {
-         client.Subscribe(new string[] { item }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });   
+            client.Subscribe(new string[] { item }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });   
         }
     }
 
@@ -145,13 +146,13 @@ public class MqttManager : M2MqttUnityClient
     {
         //The message is decoded and stored into the mqttObj (defined at the lines 40-63)
         mqttObject.msg = System.Text.Encoding.UTF8.GetString(message);
-        mqttObject.topic=topicReceived;
+        mqttObject.topic = topicReceived;
 
         Debug.Log("Received: " + mqttObject.msg + "from topic: " + mqttObject.topic);
 
         StoreMessage(mqttObject);
         
-        if(OnMessageArrived !=null){
+        if (OnMessageArrived != null) {
             OnMessageArrived(mqttObject);
         }
     }
