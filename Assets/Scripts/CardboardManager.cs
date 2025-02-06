@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Google.XR.Cardboard;
 
-public class CardBoardManager: MonoBehaviour
+public class CardboardManager: MonoBehaviour
 {
+    public Button launchButton; 
     private Google.XR.Cardboard.XRLoader cardboardLoader;
 
     void Start()
@@ -14,9 +16,9 @@ public class CardBoardManager: MonoBehaviour
     {
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            gameObject.SetActive(false);
             cardboardLoader.Initialize();
             cardboardLoader.Start();
+            launchButton.gameObject.SetActive(false);
         }
     }
 
@@ -28,7 +30,7 @@ public class CardBoardManager: MonoBehaviour
             {
                 cardboardLoader.Stop();
                 cardboardLoader.Deinitialize();
-                gameObject.SetActive(true);
+                launchButton.gameObject.SetActive(true);
             }
         }
     }
