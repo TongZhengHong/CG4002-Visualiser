@@ -39,6 +39,12 @@ public class MqttManager : M2MqttUnityClient
     //public string topicSubscribe = "#"; // topic to subscribe. !!! The multi-level wildcard # is used to subscribe to all the topics. Attention i if #, subscribe to all topics. Attention if MQTT is on data plan
     public List<string> topicSubscribe = new List<string>(); //list of topics to subscribe
 
+    [SerializeField]
+    private string topicPublish = "backend/visibility";
+
+    [SerializeField]
+    private string messagePublish = "HELLO WORLD!";
+
     [Tooltip("Set this to true to perform a testing cycle automatically on startup")]
     public bool autoTest = false;
 
@@ -49,7 +55,7 @@ public class MqttManager : M2MqttUnityClient
     public delegate void OnMessageArrivedDelegate(MqttObj mqttObject);
 
     //using C# Property GET/SET and event listener to expose the connection status
-    private bool m_isConnected;
+    private bool m_isConnected = false;
 
     public bool isConnected
     {
@@ -83,10 +89,30 @@ public class MqttManager : M2MqttUnityClient
         base.Update(); // call ProcessMqttEvents()
     }
 
-    public void Publish(string topic, string message)
+    public void ToggleConnection() {
+        if (!m_isConnected) {
+            Connect();
+        } else {
+            Disconnect();
+        }
+    }
+
+    public void Publish()
     {
-        client.Publish(topic, System.Text.Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-        Debug.Log(message + " published on " + topic);
+        if (client != null && client.IsConnected) 
+        {
+            client.Publish(topicPublish, System.Text.Encoding.UTF8.GetBytes(messagePublish), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+            Debug.Log(messagePublish + " published on " + topicPublish);
+        }
+    }
+
+    public void Publish(string message)
+    {
+        if (client != null && client.IsConnected) 
+        {
+            client.Publish(topicPublish, System.Text.Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+            Debug.Log(message + " published on " + topicPublish);
+        }
     }
 
     public void SetEncrypted(bool isEncrypted)
@@ -106,7 +132,7 @@ public class MqttManager : M2MqttUnityClient
 
         if (autoTest)
         {
-            Publish("#", "Connected!");
+            Publish();
         }
     }
 

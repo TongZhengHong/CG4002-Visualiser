@@ -16,6 +16,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -112,7 +113,22 @@ public class ReticlePointer: MonoBehaviour
 
     private ARTrackedImageManager trackedImagesManager;
 
-    private bool isLookingAtQR = false;
+    public static event Action<bool> OnGazeStateChanged;
+
+    private bool _isLookingAtQR = false;
+
+    public bool isLookingAtQR
+    {
+        get { return _isLookingAtQR; }
+        private set
+        {
+            if (_isLookingAtQR != value)
+            {
+                _isLookingAtQR = value;
+                OnGazeStateChanged?.Invoke(_isLookingAtQR); // Notify listeners
+            }
+        }
+    }
 
     /// <summary>
     /// Start is called before the first frame update.
