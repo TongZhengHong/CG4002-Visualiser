@@ -43,6 +43,9 @@ public class ReticlePointer: MonoBehaviour
     [Range(-32767, 32767)]
     public int ReticleSortingOrder = 32767;
 
+    [SerializeField]
+    private GameObject opponentHealthBar;
+
     /// <summary>
     /// The angle in degrees defined between the 2 vectors that depart from the camera and point to
     /// the extremes of the minimum inner diameter of the reticle.
@@ -171,6 +174,10 @@ public class ReticlePointer: MonoBehaviour
         foreach (var updatedImage in eventArgs.updated)
         {
             isLookingAtQR = IsCameraLookingAtImage(updatedImage);
+
+            opponentHealthBar.SetActive(updatedImage.trackingState == TrackingState.Tracking);
+            Vector3 offset = new Vector3(0, updatedImage.size.y / 2 * 1.2f, 0);
+            opponentHealthBar.transform.position = updatedImage.transform.position + offset;
         }
     }
 

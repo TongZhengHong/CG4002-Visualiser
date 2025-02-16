@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,18 @@ public class MqttController : MonoBehaviour
 
     private string tagMqtt = "MQTT";
     private MqttManager _eventSender;
+
+    public static event Action GunShootTrigger;
+
+    public static event Action ReloadTrigger;
+
+    public static event Action BombTrigger;
+
+    public static event Action ShieldTrigger;
+
+    public static event Action GolfTrigger;
+
+    public static event Action BadmintonTrigger;
 
     void Start()
     {
@@ -45,8 +58,42 @@ public class MqttController : MonoBehaviour
     private void OnMessageArrivedHandler(MqttObj mqttObject) //MqttObj is defined in MqttManager.cs
     {
         // Might want to filter the correct topic here
-        Debug.Log("Message, from Topic " + mqttObject.topic + " is = " + mqttObject.msg);
-        receivedText.text = mqttObject.msg;
+        if (mqttObject.topic != "backend/action") return;
+        Debug.Log("Received: " + mqttObject.playerNo.ToString() + " " + mqttObject.action.ToString());
+        switch (mqttObject.action)
+        {
+            case 1: // SHOOT
+                GunShootTrigger?.Invoke();
+                break;
+            case 2: // SHIELD
+                ShieldTrigger?.Invoke();
+                break;
+            case 3: // RELOAD
+                ReloadTrigger?.Invoke();
+                break; 
+
+            case 4: // LOGOUT
+           
+                break; 
+            case 5: // BOMB
+                BombTrigger?.Invoke();
+                break; 
+            case 6: // BADMINTON
+                BadmintonTrigger?.Invoke();
+                break; 
+            case 7: // GOLF
+                GolfTrigger?.Invoke();
+                break; 
+            case 8: // FENCING
+           
+                break; 
+            case 9: // BOXING
+                         
+                break;  
+            default:
+                       
+                break; 
+        }
     }
 
     private void OnConnectionChanged(bool isConnected) 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="svg248"
+   width="18"
+   height="18"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="g253"
+     transform="translate(-69,-70)">
+    <path
+       stroke="none"
+       fill="#35baf3"
+       d="m 87,72 v 6 H 69 v -6 h 18 m 0,12 v 2 H 69 v -2 h 18"
+       id="path13" />
+    <path
+       stroke="none"
+       fill="#1989b8"
+       d="M 87,72 H 69 v -2 h 18 v 2 m 0,14 v 2 H 69 v -2 h 18"
+       id="path14" />
+    <path
+       stroke="none"
+       fill="#1ea7e1"
+       d="m 69,78 h 18 v 6 H 69 v -6"
+       id="path15" />
+  </g>
+</svg>

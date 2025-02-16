@@ -6,15 +6,8 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 // Store message received and topic subscribed, so we can select the right object from the controller
 // C# GET/SET Property and event listener is used to reduce Update overhead in the controlled objects
 public class MqttObj {
-    private string m_msg;
-    public string msg
-    {
-        get { return m_msg; }
-        set {
-            if (m_msg == value) return;
-            m_msg = value;
-        }
-    }
+    public int playerNo;
+    public int action;
 
     private string m_topic;
     public string topic
@@ -170,11 +163,10 @@ public class MqttManager : M2MqttUnityClient
 
     protected override void DecodeMessage(string topicReceived, byte[] message)
     {
-        //The message is decoded and stored into the mqttObj (defined at the lines 40-63)
-        mqttObject.msg = System.Text.Encoding.UTF8.GetString(message);
+        mqttObject.playerNo = message[0] == 0x01 ? 1 : 2;
+        int action = (int) message[1];
+        mqttObject.action = action > 9 ? 0 : action;
         mqttObject.topic = topicReceived;
-
-        Debug.Log("Received: " + mqttObject.msg + "from topic: " + mqttObject.topic);
 
         StoreMessage(mqttObject);
         
