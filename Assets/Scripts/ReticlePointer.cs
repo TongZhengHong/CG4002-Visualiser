@@ -44,7 +44,7 @@ public class ReticlePointer: MonoBehaviour
     public int ReticleSortingOrder = 32767;
 
     [SerializeField]
-    private GameObject opponentHealthBar;
+    private GameObject opponent;
 
     /// <summary>
     /// The angle in degrees defined between the 2 vectors that depart from the camera and point to
@@ -170,9 +170,9 @@ public class ReticlePointer: MonoBehaviour
         {
             isLookingAtQR = IsCameraLookingAtImage(updatedImage);
 
-            opponentHealthBar.SetActive(updatedImage.trackingState == TrackingState.Tracking);
-            Vector3 offset = new Vector3(0, updatedImage.size.y / 2 * 1.2f, 0);
-            opponentHealthBar.transform.position = updatedImage.transform.position + offset;
+            opponent.SetActive(updatedImage.trackingState == TrackingState.Tracking);
+            Vector3 offset = new Vector3(0, updatedImage.size.y / 2 * 1.5f, 0);
+            opponent.transform.position = updatedImage.transform.position + offset;
         }
     }
 

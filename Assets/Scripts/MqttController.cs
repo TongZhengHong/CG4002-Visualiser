@@ -31,6 +31,9 @@ public class MqttController : MonoBehaviour
     public static event Action GolfTrigger;
 
     public static event Action BadmintonTrigger;
+    
+    public static event Action BoxingTrigger;
+    public static event Action FencingTrigger;
 
     void Start()
     {
@@ -72,7 +75,7 @@ public class MqttController : MonoBehaviour
                 break;
             case 3: // RELOAD
                 ReloadTrigger?.Invoke();
-                receivedText.text += "Shield";
+                receivedText.text += "Reload";
                 break; 
             case 4: // LOGOUT
                 receivedText.text += "Logout";
@@ -90,9 +93,11 @@ public class MqttController : MonoBehaviour
                 receivedText.text += "Golf";
                 break; 
             case 8: // FENCING
+                FencingTrigger?.Invoke();
                 receivedText.text += "Fencing";
                 break; 
             case 9: // BOXING
+                BoxingTrigger?.Invoke();
                 receivedText.text += "Boxing";
                 break;  
             default:

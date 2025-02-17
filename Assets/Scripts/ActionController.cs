@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class ActionController : MonoBehaviour
@@ -5,6 +6,10 @@ public class ActionController : MonoBehaviour
 
     [SerializeField] private GameObject shuttlecockPrefab;
     [SerializeField] private GameObject golfPrefab;
+    
+    [SerializeField] private GameObject boxingObject;
+
+    [SerializeField] private GameObject fencingObject;
 
     private Camera cam;
 
@@ -18,6 +23,8 @@ public class ActionController : MonoBehaviour
 
         MqttController.GolfTrigger += OnGolfTriggered;
         MqttController.BadmintonTrigger += OnBadmintonTriggered;
+        MqttController.BoxingTrigger += OnBoxingTriggered;
+        MqttController.FencingTrigger += OnFencingTriggered;
     }
 
     void LateUpdate()
@@ -42,6 +49,44 @@ public class ActionController : MonoBehaviour
         GameObject badmintonInstance = Instantiate(shuttlecockPrefab, camPos, camRotation);
         ActionProjectile badminton = badmintonInstance.GetComponent<ActionProjectile>();
         badminton.OnLaunchProjectile();
+    }
+
+    private void OnBoxingTriggered()
+    {
+        if (boxingObject == null) return;
+
+        boxingObject.SetActive(true);
+        Animator boxingAnimator = boxingObject.GetComponent<Animator>();
+        if (boxingAnimator != null)
+        {
+            boxingAnimator.SetTrigger("PunchTrigger");
+        }
+        StartCoroutine(HideBoxingGloves());
+    }
+
+    public IEnumerator HideBoxingGloves()
+    {
+        yield return new WaitForSeconds(1.5f);
+        boxingObject.SetActive(false);
+    }
+
+    private void OnFencingTriggered()
+    {
+        if (fencingObject == null) return;
+
+        fencingObject.SetActive(true);
+        Animator fencingAnimator = fencingObject.GetComponent<Animator>();
+        if (fencingAnimator != null) 
+        {
+            fencingAnimator.SetTrigger("LungeSword");
+        }
+        StartCoroutine(HideFencingSword());
+    }
+
+    public IEnumerator HideFencingSword()
+    {
+        yield return new WaitForSeconds(1.5f);
+        fencingObject.SetActive(false);
     }
 
 }
