@@ -55,47 +55,51 @@ public class MqttController : MonoBehaviour
 
     private void OnMessageArrivedHandler(MqttObj mqttObject) //MqttObj is defined in MqttManager.cs
     {
-        if (mqttObject.topic == "viz/trigger") 
-        {
-            SendVisibilityTrigger?.Invoke();
-        }
-        // Might want to filter the correct topic here
-        if (mqttObject.topic != "backend/action") return;
+        if (mqttObject.topic != "viz/trigger") return;
+
         Debug.Log("Received: " + mqttObject.playerNo.ToString() + " " + mqttObject.action.ToString());
+
+        receivedText.text = "Received: \n";
         switch (mqttObject.action)
         {
             case 1: // SHOOT
                 GunShootTrigger?.Invoke();
+                receivedText.text += "Shoot";
                 break;
             case 2: // SHIELD
                 ShieldTrigger?.Invoke();
+                receivedText.text += "Shield";
                 break;
             case 3: // RELOAD
                 ReloadTrigger?.Invoke();
+                receivedText.text += "Shield";
                 break; 
-
             case 4: // LOGOUT
-           
+                receivedText.text += "Logout";
                 break; 
             case 5: // BOMB
                 BombTrigger?.Invoke();
+                receivedText.text += "Bomb";
                 break; 
             case 6: // BADMINTON
                 BadmintonTrigger?.Invoke();
+                receivedText.text += "Badminton";
                 break; 
             case 7: // GOLF
                 GolfTrigger?.Invoke();
+                receivedText.text += "Golf";
                 break; 
             case 8: // FENCING
-           
+                receivedText.text += "Fencing";
                 break; 
             case 9: // BOXING
-                         
+                receivedText.text += "Boxing";
                 break;  
             default:
-                       
+                receivedText.text += "None";
                 break; 
         }
+        SendVisibilityTrigger?.Invoke();
     }
 
     private void OnConnectionChanged(bool isConnected) 
