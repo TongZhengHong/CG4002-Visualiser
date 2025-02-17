@@ -1,0 +1,5 @@
+/Users/zhenghong/Unity/Visualiser/.utmp/Debug/6a1t571y/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/zhenghong/Unity/Visualiser/.utmp/Debug/6a1t571y/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/zhenghong/Unity/Visualiser/.utmp/Debug/6a1t571y/armeabi-v7a/GameActivity/CMakeFiles/game.dir
+/Users/zhenghong/Unity/Visualiser/.utmp/Debug/6a1t571y/armeabi-v7a/GameActivity/CMakeFiles/edit_cache.dir
+/Users/zhenghong/Unity/Visualiser/.utmp/Debug/6a1t571y/armeabi-v7a/GameActivity/CMakeFiles/rebuild_cache.dir

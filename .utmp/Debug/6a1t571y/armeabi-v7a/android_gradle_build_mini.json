@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/zhenghong/Unity/Visualiser/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/CMakeLists.txt",
+    "/Users/zhenghong/Unity/Visualiser/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Applications/Unity/Hub/Editor/6000.0.34f1/PlaybackEngines/AndroidPlayer/SDK/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/zhenghong/Unity/Visualiser/.utmp/Debug/6a1t571y/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Applications/Unity/Hub/Editor/6000.0.34f1/PlaybackEngines/AndroidPlayer/SDK/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/zhenghong/Unity/Visualiser/.utmp/Debug/6a1t571y/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "game::@d02bb112ea9f9c2ed29f": {
+      "artifactName": "game",
+      "abi": "armeabi-v7a",
+      "output": "/Users/zhenghong/Unity/Visualiser/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/6a1t571y/obj/armeabi-v7a/libgame.so",
+      "runtimeFiles": []
+    }
+  }
+}
