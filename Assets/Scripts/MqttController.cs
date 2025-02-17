@@ -16,7 +16,9 @@ public class MqttController : MonoBehaviour
     private TMP_Text receivedText;
 
     private string tagMqtt = "MQTT";
-    private MqttManager _eventSender;
+    private MqttManager mqttManager;
+
+    public static event Action SendVisibilityTrigger;
 
     public static event Action GunShootTrigger;
 
@@ -32,31 +34,31 @@ public class MqttController : MonoBehaviour
 
     void Start()
     {
-        if (GameObject.FindGameObjectsWithTag(tagMqtt).Length > 0)
-        {
-            _eventSender = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
-            _eventSender.OnMessageArrived += OnMessageArrivedHandler;
-            _eventSender.OnConnectionSucceeded += OnConnectionChanged;
-            ReticlePointer.OnGazeStateChanged += SendStateToMqtt;
-        }
-        else
+        if (GameObject.FindGameObjectsWithTag(tagMqtt).Length == 0)
         {
             Debug.LogError("At least one GameObject with mqttManager component and Tag == tag_mqttManager needs to be provided");
+            return;
         }
+        mqttManager = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
+        mqttManager.OnMessageArrived += OnMessageArrivedHandler;
+        mqttManager.OnConnectionSucceeded += OnConnectionChanged;
     }
 
     void OnDisable()
     {
-        if (_eventSender != null)
+        if (mqttManager != null)
         {
-            _eventSender.OnMessageArrived -= OnMessageArrivedHandler;
-            _eventSender.OnConnectionSucceeded -= OnConnectionChanged;
+            mqttManager.OnMessageArrived -= OnMessageArrivedHandler;
+            mqttManager.OnConnectionSucceeded -= OnConnectionChanged;
         }
-        ReticlePointer.OnGazeStateChanged -= SendStateToMqtt;
     }
 
     private void OnMessageArrivedHandler(MqttObj mqttObject) //MqttObj is defined in MqttManager.cs
     {
+        if (mqttObject.topic == "viz/trigger") 
+        {
+            SendVisibilityTrigger?.Invoke();
+        }
         // Might want to filter the correct topic here
         if (mqttObject.topic != "backend/action") return;
         Debug.Log("Received: " + mqttObject.playerNo.ToString() + " " + mqttObject.action.ToString());
@@ -102,11 +104,4 @@ public class MqttController : MonoBehaviour
         connectButtonText.text = isConnected ? "Disconnect" : "Connect";
     }
 
-    private void SendStateToMqtt(bool isGazing) 
-    {
-        if (_eventSender != null) 
-        {
-            _eventSender.Publish("Looking at QR code: " + isGazing.ToString());
-        }
-    }
 }

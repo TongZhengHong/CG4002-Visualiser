@@ -116,35 +116,30 @@ public class ReticlePointer: MonoBehaviour
 
     private ARTrackedImageManager trackedImagesManager;
 
-    public static event Action<bool> OnGazeStateChanged;
+    private bool isLookingAtQR = false;
 
-    private bool _isLookingAtQR = false;
-
-    public bool isLookingAtQR
-    {
-        get { return _isLookingAtQR; }
-        private set
-        {
-            if (_isLookingAtQR != value)
-            {
-                _isLookingAtQR = value;
-                OnGazeStateChanged?.Invoke(_isLookingAtQR); // Notify listeners
-            }
-        }
-    }
+    private string tagMqtt = "MQTT";
+    private MqttManager mqttManager;
 
     /// <summary>
     /// Start is called before the first frame update.
     /// </summary>
     private void Start()
     {
-
         Renderer rendererComponent = GetComponent<Renderer>();
         rendererComponent.sortingOrder = ReticleSortingOrder;
 
         _reticleMaterial = rendererComponent.material;
 
         CreateMesh();
+
+        if (GameObject.FindGameObjectsWithTag(tagMqtt).Length == 0)
+        {
+            Debug.LogError("At least one GameObject with mqttManager component and Tag == tag_mqttManager needs to be provided");
+            return;
+        }
+        mqttManager = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
+        MqttController.SendVisibilityTrigger += PublishPlayerViz;
     }
 
     void Update()
@@ -153,7 +148,7 @@ public class ReticlePointer: MonoBehaviour
         {
             ActivateReticle();
         } else {
-            ResetParams();
+            ResetReticle();
         }
         UpdateDiameters();
     }
@@ -194,6 +189,15 @@ public class ReticlePointer: MonoBehaviour
             return IsPointWithinImageBounds(hitPoint, trackedImage);
         }
         return false;
+    }
+
+    private void PublishPlayerViz() 
+    {
+        if (mqttManager != null) 
+        {
+            Debug.Log("Sending: " + isLookingAtQR.ToString());
+            mqttManager.Publish(isLookingAtQR.ToString()); //new byte[] { isLookingAtQR ? (byte) 1 : (byte) 0 }
+        }
     }
 
     private bool IsPointWithinImageBounds(Vector3 hitPoint, ARTrackedImage trackedImage)
@@ -256,7 +260,7 @@ public class ReticlePointer: MonoBehaviour
     /// <summary>
     /// Exits the reticle pointer's target.
     /// </summary>
-    private void ResetParams()
+    private void ResetReticle()
     {
         _reticleDistanceInMeters = _RETICLE_DISTANCE;
         _reticleInnerAngle = _RETICLE_MIN_INNER_ANGLE;

@@ -33,7 +33,7 @@ public class MqttManager : M2MqttUnityClient
     public List<string> topicSubscribe = new List<string>(); //list of topics to subscribe
 
     [SerializeField]
-    private string topicPublish = "backend/visibility";
+    private string topicPublish = "viz/player_vis";
 
     [SerializeField]
     private string messagePublish = "HELLO WORLD!";
@@ -163,11 +163,14 @@ public class MqttManager : M2MqttUnityClient
 
     protected override void DecodeMessage(string topicReceived, byte[] message)
     {
-        mqttObject.playerNo = message[0] == 0x01 ? 1 : 2;
-        int action = (int) message[1];
-        mqttObject.action = action > 9 ? 0 : action;
-        mqttObject.topic = topicReceived;
+        if (message.Length > 0)
+        {
+            mqttObject.playerNo = message[0] == 0x01 ? 1 : 2;
+            int action = (int) message[1];
+            mqttObject.action = action > 9 ? 0 : action;
+        }
 
+        mqttObject.topic = topicReceived;
         StoreMessage(mqttObject);
         
         if (OnMessageArrived != null) {
