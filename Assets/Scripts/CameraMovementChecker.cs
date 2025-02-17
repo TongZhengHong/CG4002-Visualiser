@@ -19,6 +19,8 @@ public class CameraMovementChecker : MonoBehaviour
     }
     private Vector3 lastPosition;
 
+    private float movementThreshold = 0.02f;
+
     public static event Action<bool> OnCameraMoved;
 
     void Start()
@@ -28,7 +30,8 @@ public class CameraMovementChecker : MonoBehaviour
 
     void Update()
     {
-        isMoving = transform.position != lastPosition;
+        Vector3 currentVelocity = (transform.position - lastPosition) / Time.deltaTime;
+        isMoving = currentVelocity.magnitude > movementThreshold;
         lastPosition = transform.position;
     }
 }
