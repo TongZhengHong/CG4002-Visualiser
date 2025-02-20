@@ -16,12 +16,9 @@ public class ShieldBombSection : MonoBehaviour
     {
         shieldTextColor = shieldCountText.color;
         bombTextColor = bombCountText.color;
-
-        ShieldController.UpdateShieldCount += OnShieldChanged;
-        BombController.UpdateBombCount += OnBombChanged;
     }
 
-    private void OnShieldChanged(int newCount)
+    public void UpdateShieldCount(int newCount)
     {
         if (newCount < 0) 
         {
@@ -31,7 +28,7 @@ public class ShieldBombSection : MonoBehaviour
         shieldCountText.text = newCount.ToString();
     }
 
-    private void OnBombChanged(int newCount)
+    public void UpdateBombCount(int newCount)
     {
         if (newCount < 0) 
         {

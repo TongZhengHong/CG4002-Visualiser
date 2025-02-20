@@ -1,10 +1,13 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
 public class GunController : MonoBehaviour
 {
     [SerializeField] private ParticleSystem muzzleFlash;
+
+    [SerializeField] private GameObject mazagineObject;
+
+    private MazagineController mazagineController;
 
     [SerializeField] private float fireRate = 5f; // Bullets per seconds
 
@@ -20,9 +23,7 @@ public class GunController : MonoBehaviour
 
     private bool isReloading = false;
 
-    public static event Action ReloadGunTrigger;
-
-    public static event Action ShootGunTrigger;
+    private int BULLET_DAMAGE = 5;
 
     private void Start()
     {
@@ -30,9 +31,11 @@ public class GunController : MonoBehaviour
         gunAnimator = GetComponent<Animator>();
 
         CameraMovementChecker.OnCameraMoved += UpdateMoveAnimation;
-        MqttController.GunShootTrigger += ShootGun;
-        MqttController.ReloadTrigger += ReloadBullets;
-        PlayerInfo.PlayerDeath += OnRespawn;
+
+        if (mazagineObject != null)
+        {
+            mazagineController = mazagineObject.GetComponent<MazagineController>();
+        }
     }
 
     public void Update()
@@ -45,13 +48,13 @@ public class GunController : MonoBehaviour
         gunAnimator.SetBool("isMoving", isMoving);
     }
 
-    public void ShootGun()
+    public int ShootGun()
     {
-        if (!CanShoot()) return;
+        if (!CanShoot()) return 0;
 
-        if (bulletCount >= 0) 
-        {
-            ShootGunTrigger?.Invoke();
+        if (bulletCount >= 0 && mazagineController != null) 
+        { // Show empty mazagine animation
+            mazagineController.ShootBullet();
         }
 
         if (bulletCount > 0) 
@@ -61,7 +64,10 @@ public class GunController : MonoBehaviour
 
             muzzleFlash.Play();
             gunAnimator.SetTrigger("Shoot");
+            return BULLET_DAMAGE;
         } 
+
+        return 0;
     }
 
     private bool CanShoot() => !isReloading && timeSinceLastShot > (1f / fireRate);  
@@ -71,7 +77,10 @@ public class GunController : MonoBehaviour
         if (!isReloading && bulletCount == 0)
         {
             StartCoroutine(Reload());
-            ReloadGunTrigger?.Invoke();
+            if (mazagineController != null) 
+            {
+                mazagineController.ReloadBullets();
+            }
         }
     }
 
@@ -87,12 +96,17 @@ public class GunController : MonoBehaviour
         isReloading = false;
     }
 
-    private void OnRespawn()
+    public void OnRespawn()
     {
         StopAllCoroutines();
         bulletCount = MAX_BULLETS;
         gunAnimator.SetBool("isMoving", false);
         gunAnimator.SetBool("isReloading", false);
+
+        if (mazagineController != null)
+        {
+            mazagineController.OnRespawn();
+        }
     }
 
 }

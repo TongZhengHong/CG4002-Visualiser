@@ -16,7 +16,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -116,10 +115,7 @@ public class ReticlePointer: MonoBehaviour
 
     private ARTrackedImageManager trackedImagesManager;
 
-    private bool isLookingAtQR = false;
-
-    private string tagMqtt = "MQTT";
-    private MqttManager mqttManager;
+    public static bool isLookingAtQR = false;
 
     /// <summary>
     /// Start is called before the first frame update.
@@ -132,14 +128,6 @@ public class ReticlePointer: MonoBehaviour
         _reticleMaterial = rendererComponent.material;
 
         CreateMesh();
-
-        if (GameObject.FindGameObjectsWithTag(tagMqtt).Length == 0)
-        {
-            Debug.LogError("At least one GameObject with mqttManager component and Tag == tag_mqttManager needs to be provided");
-            return;
-        }
-        mqttManager = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
-        MqttController.SendVisibilityTrigger += PublishPlayerViz;
     }
 
     void Update()
@@ -171,8 +159,10 @@ public class ReticlePointer: MonoBehaviour
             isLookingAtQR = IsCameraLookingAtImage(updatedImage);
 
             opponent.SetActive(updatedImage.trackingState == TrackingState.Tracking);
-            Vector3 offset = new Vector3(0, updatedImage.size.y / 2 * 1.5f, 0);
-            opponent.transform.position = updatedImage.transform.position + offset;
+            opponent.transform.position = updatedImage.transform.position;
+            opponent.transform.rotation = Quaternion.LookRotation(updatedImage.transform.up, Vector3.up);
+            // opponent.transform.LookAt(updatedImage.transform.position + updatedImage.transform.up);
+            // opponent.transform.position = updatedImage.transform.position;
         }
     }
 
@@ -190,16 +180,6 @@ public class ReticlePointer: MonoBehaviour
         }
         return false;
     }
-
-    private void PublishPlayerViz() 
-    {
-        if (mqttManager != null) 
-        {
-            Debug.Log("Sending: " + isLookingAtQR.ToString());
-            mqttManager.Publish(isLookingAtQR.ToString()); //new byte[] { isLookingAtQR ? (byte) 1 : (byte) 0 }
-        }
-    }
-
     private bool IsPointWithinImageBounds(Vector3 hitPoint, ARTrackedImage trackedImage)
     {
         // Convert world-space hit point to local-space of the image, origin of plane is the position of tracked image

@@ -22,8 +22,6 @@ public class PlayerInfo : MonoBehaviour
 
     private const int MAX_SHIELD = 30;
 
-    public static event Action PlayerDeath;
-
     public static event Action ShieldDestroyed;
 
     void Start()
@@ -39,20 +37,11 @@ public class PlayerInfo : MonoBehaviour
 
         SetHealthSlider(currentHealth);
         SetShieldSlider(currentShield);
-
-        ShieldController.ActivateShield += OnShieldTriggered;
     }
 
-    public void TakeRandomDamage()
+    public bool IsDeadAfterDamage(int damage)
     {
-        int damage = UnityEngine.Random.Range(5, 30);
-        TakeDamage(damage);
-        Debug.Log(damage);
-    }
-
-    public void TakeDamage(int damage)
-    {
-        if (damage <= 0) return;
+        if (damage <= 0) return false;
 
         if (currentShield > 0)
         {
@@ -70,15 +59,16 @@ public class PlayerInfo : MonoBehaviour
         // Apply remaining damage to health
         currentHealth = Math.Max(currentHealth - damage, 0);
         SetHealthSlider(currentHealth);
-        if (currentHealth == 0) 
+        bool didPlayerDie = currentHealth == 0;
+        if (didPlayerDie) 
         {
-            PlayerDeath?.Invoke();
             currentHealth = MAX_HEALTH;
             SetHealthSlider(currentHealth);
         }
+        return didPlayerDie;
     }
 
-    private void OnShieldTriggered()
+    public void ActivateShield()
     {
         currentShield = MAX_SHIELD;
         SetShieldSlider(MAX_SHIELD);

@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 using TMPro;
 
@@ -7,50 +7,74 @@ public class ShieldController : MonoBehaviour
 
     [SerializeField] private GameObject playerShield;
 
+    [SerializeField] private GameObject shieldCountObject;
+
+    private ShieldBombSection shieldBombSection;
+
     private int maxShield = 3;
 
     private int shieldCount = 0;
 
-    public static event Action ActivateShield;
-
-    public static event Action<int> UpdateShieldCount;
+    private Animator shieldAnimator;
 
     void Awake()
     {
         shieldCount = maxShield;
+        shieldAnimator = playerShield.GetComponent<Animator>();
 
-        MqttController.ShieldTrigger += OnShieldTriggered;
         PlayerInfo.ShieldDestroyed += OnShieldDestroy;
-        PlayerInfo.PlayerDeath += onRespawn;
-    }
 
-    private void OnShieldTriggered()
-    {
-        if (!playerShield.activeSelf)
+        if (shieldCountObject != null) 
         {
-            if (shieldCount == 0)
-            {
-                UpdateShieldCount?.Invoke(-1);
-                return;
-            } 
-            shieldCount--;
-            playerShield.SetActive(true);
-
-            ActivateShield?.Invoke();
-            UpdateShieldCount?.Invoke(shieldCount);
+            shieldBombSection = shieldCountObject.GetComponent<ShieldBombSection>();
         }
     }
 
     private void OnShieldDestroy() 
     {
-        playerShield.SetActive(false);
+        StartCoroutine(CloseShield());
     }
 
-    private void onRespawn() 
+    public void OnRespawn() 
     {
         shieldCount = maxShield;
-        UpdateShieldCount?.Invoke(shieldCount);
-        playerShield.SetActive(false);
+        UpdateShieldCount(maxShield);
+        StartCoroutine(CloseShield());
+    }
+
+    public IEnumerator CloseShield()
+    {
+        if (playerShield.activeSelf) 
+        {
+            shieldAnimator.SetTrigger("CloseShield");
+            yield return new WaitForSeconds(1f);
+            playerShield.SetActive(false);
+        }
+    }
+
+    public bool ActivateShield()
+    {
+        if (playerShield.activeSelf) return false;
+        if (shieldCount == 0) 
+        {
+            UpdateShieldCount(-1);
+            return false;
+        }
+
+        shieldCount--;
+        playerShield.SetActive(true);
+        shieldAnimator.SetTrigger("OpenShield");
+        UpdateShieldCount(shieldCount);
+
+        return true;
+    }
+
+    private void UpdateShieldCount(int count)
+    {
+        if (shieldBombSection != null) 
+        {
+            shieldBombSection.UpdateShieldCount(count);
+        }
     }
 
 }

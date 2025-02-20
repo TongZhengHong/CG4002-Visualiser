@@ -18,28 +18,11 @@ public class MqttController : MonoBehaviour
     private string tagMqtt = "MQTT";
     private MqttManager mqttManager;
 
-    public static event Action SendVisibilityTrigger;
-
-    public static event Action GunShootTrigger;
-
-    public static event Action ReloadTrigger;
-
-    public static event Action BombTrigger;
-
-    public static event Action ShieldTrigger;
-
-    public static event Action GolfTrigger;
-
-    public static event Action BadmintonTrigger;
-    
-    public static event Action BoxingTrigger;
-    public static event Action FencingTrigger;
-
     void Start()
     {
         if (GameObject.FindGameObjectsWithTag(tagMqtt).Length == 0)
         {
-            Debug.LogError("At least one GameObject with mqttManager component and Tag == tag_mqttManager needs to be provided");
+            Debug.LogError("Error finding MqttManager from .");
             return;
         }
         mqttManager = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
@@ -60,51 +43,10 @@ public class MqttController : MonoBehaviour
     {
         if (mqttObject.topic != "viz/trigger") return;
 
-        Debug.Log("Received: " + mqttObject.playerNo.ToString() + " " + mqttObject.action.ToString());
-
-        receivedText.text = "Received: \n";
-        switch (mqttObject.action)
-        {
-            case 1: // SHOOT
-                GunShootTrigger?.Invoke();
-                receivedText.text += "Shoot";
-                break;
-            case 2: // SHIELD
-                ShieldTrigger?.Invoke();
-                receivedText.text += "Shield";
-                break;
-            case 3: // RELOAD
-                ReloadTrigger?.Invoke();
-                receivedText.text += "Reload";
-                break; 
-            case 4: // LOGOUT
-                receivedText.text += "Logout";
-                break; 
-            case 5: // BOMB
-                BombTrigger?.Invoke();
-                receivedText.text += "Bomb";
-                break; 
-            case 6: // BADMINTON
-                BadmintonTrigger?.Invoke();
-                receivedText.text += "Badminton";
-                break; 
-            case 7: // GOLF
-                GolfTrigger?.Invoke();
-                receivedText.text += "Golf";
-                break; 
-            case 8: // FENCING
-                FencingTrigger?.Invoke();
-                receivedText.text += "Fencing";
-                break; 
-            case 9: // BOXING
-                BoxingTrigger?.Invoke();
-                receivedText.text += "Boxing";
-                break;  
-            default:
-                receivedText.text += "None";
-                break; 
-        }
-        SendVisibilityTrigger?.Invoke();
+        string[] actionStrings = { "None", "Shoot", "Shield", "Reload", "Logout", 
+            "Bomb", "Badminton", "Golf", "Fencing", "Boxing" };
+        receivedText.text = "Received: \n" + actionStrings[mqttObject.action];
+        receivedText.text += " for Player " + mqttObject.playerNo.ToString();
     }
 
     private void OnConnectionChanged(bool isConnected) 

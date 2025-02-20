@@ -90,7 +90,7 @@ public class ActionProjectile: MonoBehaviour
             yield return null;
         }
 
-        if (snowPrefab != null)
+        if (snowPrefab != null && ReticlePointer.isLookingAtQR)
         {
             Vector3 snowPos = transform.position;
             snowPos.y += 3f;

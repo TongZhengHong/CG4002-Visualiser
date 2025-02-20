@@ -17,14 +17,14 @@ public class ActionController : MonoBehaviour
 
     private Quaternion camRotation;
 
+    private int GOLF_DAMAGE = 10;
+    private int BADMINTON_DAMAGE = 10;
+    private int BOXING_DAMAGE = 10;
+    private int FENCING_DAMAGE = 10;
+
     void Start()
     {
         cam = Camera.main;
-
-        MqttController.GolfTrigger += OnGolfTriggered;
-        MqttController.BadmintonTrigger += OnBadmintonTriggered;
-        MqttController.BoxingTrigger += OnBoxingTriggered;
-        MqttController.FencingTrigger += OnFencingTriggered;
     }
 
     void LateUpdate()
@@ -33,27 +33,29 @@ public class ActionController : MonoBehaviour
         camRotation = cam.transform.rotation;
     }
 
-    private void OnGolfTriggered()
+    public int TriggerGolf()
     {
-        if (golfPrefab == null) return;
+        if (golfPrefab == null) return 0;
 
         GameObject golfInstance = Instantiate(golfPrefab, camPos, camRotation);
         ActionProjectile golf = golfInstance.GetComponent<ActionProjectile>();
         golf.OnLaunchProjectile();
+        return GOLF_DAMAGE;
     }
 
-    private void OnBadmintonTriggered()
+    public int TriggerBadminton()
     {
-        if (shuttlecockPrefab == null) return;
+        if (shuttlecockPrefab == null) return 0;
 
         GameObject badmintonInstance = Instantiate(shuttlecockPrefab, camPos, camRotation);
         ActionProjectile badminton = badmintonInstance.GetComponent<ActionProjectile>();
         badminton.OnLaunchProjectile();
+        return BADMINTON_DAMAGE;
     }
 
-    private void OnBoxingTriggered()
+    public int TriggerBoxing()
     {
-        if (boxingObject == null) return;
+        if (boxingObject == null) return 0;
 
         boxingObject.SetActive(true);
         Animator boxingAnimator = boxingObject.GetComponent<Animator>();
@@ -62,17 +64,18 @@ public class ActionController : MonoBehaviour
             boxingAnimator.SetTrigger("PunchTrigger");
         }
         StartCoroutine(HideBoxingGloves());
+        return BOXING_DAMAGE;
     }
 
     public IEnumerator HideBoxingGloves()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
         boxingObject.SetActive(false);
     }
 
-    private void OnFencingTriggered()
+    public int TriggerFencing()
     {
-        if (fencingObject == null) return;
+        if (fencingObject == null) return 0;
 
         fencingObject.SetActive(true);
         Animator fencingAnimator = fencingObject.GetComponent<Animator>();
@@ -81,11 +84,12 @@ public class ActionController : MonoBehaviour
             fencingAnimator.SetTrigger("LungeSword");
         }
         StartCoroutine(HideFencingSword());
+        return FENCING_DAMAGE;
     }
 
     public IEnumerator HideFencingSword()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
         fencingObject.SetActive(false);
     }
 

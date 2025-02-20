@@ -163,9 +163,10 @@ public class MqttManager : M2MqttUnityClient
 
     protected override void DecodeMessage(string topicReceived, byte[] message)
     {
-        if (message.Length > 0)
+        if (message.Length >= 2)
         {
-            mqttObject.playerNo = message[0] == 0x01 ? 1 : 2;
+            mqttObject.playerNo = message[0] == 0x01 ? 1 : 
+                message[0] == 0x02 ? 2 : 0;
             int action = (int) message[1];
             mqttObject.action = action > 9 ? 0 : action;
         }

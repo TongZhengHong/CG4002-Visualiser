@@ -21,13 +21,9 @@ public class MazagineController: MonoBehaviour
             bullet.SetActive(true);
         }
         originalTextColor = bulletCountText.color;
-
-        GunController.ReloadGunTrigger += ReloadBullets;
-        GunController.ShootGunTrigger += ShootBullet;
-        PlayerInfo.PlayerDeath += OnRespawn;
     }
 
-    private void ShootBullet()
+    public void ShootBullet()
     {
         if (bulletCount == 0)
         {
@@ -39,7 +35,7 @@ public class MazagineController: MonoBehaviour
         bulletCountText.text = bulletCount.ToString();
     }
 
-    private void ReloadBullets()
+    public void ReloadBullets()
     {
         StartCoroutine(Reload());
     }
@@ -58,7 +54,7 @@ public class MazagineController: MonoBehaviour
         bulletCountText.color = originalTextColor; 
     }
 
-    private void OnRespawn()
+    public void OnRespawn()
     {
         StopAllCoroutines();
         foreach (GameObject bullet in bulletList)
@@ -66,6 +62,7 @@ public class MazagineController: MonoBehaviour
             bullet.SetActive(true);
         }
         bulletCount = bulletList.Length;
+        bulletCountText.text = bulletList.Length.ToString();
         bulletCountText.color = originalTextColor; 
     }
 

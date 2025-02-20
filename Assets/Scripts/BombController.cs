@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using TMPro;
 
@@ -6,11 +5,13 @@ public class BombController: MonoBehaviour
 {
     [SerializeField] private GameObject bombPrefab;
 
+    [SerializeField] private GameObject bombCountObject;
+
+    private ShieldBombSection shieldBombSection;
+
     private int maxBomb = 2;
 
     private int bombCount = 0;
-
-    public static event Action<int> UpdateBombCount;
 
     private Camera cam;
 
@@ -18,13 +19,17 @@ public class BombController: MonoBehaviour
 
     private Quaternion camRotation;
 
+    private int BOMB_DAMAGE = 5;
+
     void Start()
     {
         cam = Camera.main;
         bombCount = maxBomb;
 
-        MqttController.BombTrigger += OnBombTriggered;
-        PlayerInfo.PlayerDeath += onRespawn;
+        if (bombCountObject != null)
+        {
+            shieldBombSection = bombCountObject.GetComponent<ShieldBombSection>();
+        }
     }
 
     void LateUpdate()
@@ -33,12 +38,12 @@ public class BombController: MonoBehaviour
         camRotation = cam.transform.rotation;
     }
 
-    private void OnBombTriggered()
+    public int ThrowBomb()
     {
         if (bombCount == 0)
         {
-            UpdateBombCount?.Invoke(-1);
-            return;
+            UpdateBombCount(-1);
+            return 0;
         } 
 
         GameObject bombInstance = Instantiate(bombPrefab, camPos, camRotation);
@@ -46,13 +51,22 @@ public class BombController: MonoBehaviour
         bomb.OnLaunchProjectile();
 
         bombCount--;
-        UpdateBombCount?.Invoke(bombCount);
+        UpdateBombCount(bombCount);
+        return BOMB_DAMAGE;
     }
 
-    private void onRespawn() 
+    public void OnRespawn() 
     {
         bombCount = maxBomb;
-        UpdateBombCount?.Invoke(bombCount);
+        UpdateBombCount(maxBomb);
+    }
+
+    private void UpdateBombCount(int count)
+    {
+        if (shieldBombSection != null) 
+        {
+            shieldBombSection.UpdateBombCount(count);
+        }
     }
 
 }
