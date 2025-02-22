@@ -27,19 +27,9 @@ public class MqttObj {
 
 public class MqttManager : M2MqttUnityClient
 {
-    [Header("MQTT topics")]
-    [Tooltip("Set the topic to subscribe to. Note: Multi-level wildcard # subscribes to all topics")]
-    //public string topicSubscribe = "#"; // topic to subscribe. !!! The multi-level wildcard # is used to subscribe to all the topics. Attention i if #, subscribe to all topics. Attention if MQTT is on data plan
-    public List<string> topicSubscribe = new List<string>(); //list of topics to subscribe
+    public List<string> topicSubscribeList = new List<string>();
 
-    [SerializeField]
     private string topicPublish = "viz/player_vis";
-
-    [SerializeField]
-    private string messagePublish = "HELLO WORLD!";
-
-    [Tooltip("Set this to true to perform a testing cycle automatically on startup")]
-    public bool autoTest = false;
 
     //new mqttObj is created to store message received and topic subscribed
     MqttObj mqttObject = new MqttObj();
@@ -72,6 +62,8 @@ public class MqttManager : M2MqttUnityClient
 
     private List<MqttObj> eventMessages = new List<MqttObj>();
 
+
+
     protected override void Start()
     {
         base.Start();
@@ -87,15 +79,6 @@ public class MqttManager : M2MqttUnityClient
             Connect();
         } else {
             Disconnect();
-        }
-    }
-
-    public void Publish()
-    {
-        if (client != null && client.IsConnected) 
-        {
-            client.Publish(topicPublish, System.Text.Encoding.UTF8.GetBytes(messagePublish), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-            Debug.Log(messagePublish + " published on " + topicPublish);
         }
     }
 
@@ -122,11 +105,6 @@ public class MqttManager : M2MqttUnityClient
     {
         base.OnConnected();
         isConnected = true;
-
-        if (autoTest)
-        {
-            Publish();
-        }
     }
 
     protected override void OnConnectionFailed(string errorMessage)
@@ -147,7 +125,9 @@ public class MqttManager : M2MqttUnityClient
 
     protected override void SubscribeTopics()
     {
-        foreach (string item in topicSubscribe) //subscribe to all the topics of the Public List topicSubscribe, not most efficient way (e.g. JSON object works better), but it might be useful in certain circumstances 
+        if (client == null || !client.IsConnected) return;
+
+        foreach (string item in topicSubscribeList)  
         {
             client.Subscribe(new string[] { item }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });   
         }
@@ -155,7 +135,9 @@ public class MqttManager : M2MqttUnityClient
 
     protected override void UnsubscribeTopics()
     {
-        foreach (string item in topicSubscribe)
+        if (client == null || !client.IsConnected) return;
+        
+        foreach (string item in topicSubscribeList)
         {
             client.Unsubscribe(new string[] { item });
         }
@@ -193,11 +175,23 @@ public class MqttManager : M2MqttUnityClient
         Disconnect();
     }
 
-    private void OnValidate()
+    public void SetMqttSettings(string address, int port, string username, 
+        string password, string action, string visibility)
     {
-        if (autoTest)
-        {
-            autoConnect = true;
-        }
+        brokerAddress = address;
+        brokerPort = port;
+
+        mqttUserName = username;
+        mqttPassword = password;
+
+        topicSubscribeList.Clear();
+        topicSubscribeList.Add(action);
+        topicSubscribeList.Add(visibility);
+
+        topicPublish = visibility;
+
+        UnsubscribeTopics();
+        SubscribeTopics();
     }
+
 }
