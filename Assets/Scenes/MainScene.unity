@@ -6859,6 +6859,7 @@ GameObject:
   - component: {fileID: 737466768}
   - component: {fileID: 737466767}
   - component: {fileID: 737466766}
+  - component: {fileID: 737466769}
   m_Layer: 5
   m_Name: VisibilityButton
   m_TagString: Untagged
@@ -6962,6 +6963,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 737466764}
   m_CullTransparentMesh: 1
+--- !u!114 &737466769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737466764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d956b9116cdfa47c49904725b00281c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonGroupObject: {fileID: 1924041750}
+  iconImage: {fileID: 818434240}
+  visibilityOnIcon: {fileID: 21300000, guid: 708f894b44e374c08a36755d336e3391, type: 3}
+  visibilityOffIcon: {fileID: 21300000, guid: 88a19d25d490440c6ab5072b1b019ee1, type: 3}
 --- !u!1 &742586003
 GameObject:
   m_ObjectHideFlags: 0
