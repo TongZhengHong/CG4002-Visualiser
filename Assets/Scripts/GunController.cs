@@ -25,12 +25,29 @@ public class GunController : MonoBehaviour
 
     private int BULLET_DAMAGE = 5;
 
+    private bool _isGunMoving;
+
+    public bool isGunMoving {
+        get { return _isGunMoving; }
+        private set
+        {
+            if (_isGunMoving != value)
+            {
+                _isGunMoving = value;
+                gunAnimator.SetBool("isMoving", _isGunMoving);
+            }
+        }
+    }
+    private Vector3 lastGunPosition;
+
+    private float movementThreshold = 0.03f;
+
     private void Start()
     {
         bulletCount = MAX_BULLETS;
         gunAnimator = GetComponent<Animator>();
 
-        CameraMovementChecker.OnCameraMoved += UpdateMoveAnimation;
+        lastGunPosition = transform.position; // Initialise starting gun position
 
         if (mazagineObject != null)
         {
@@ -41,6 +58,10 @@ public class GunController : MonoBehaviour
     public void Update()
     {
         timeSinceLastShot += Time.deltaTime;
+
+        Vector3 currentVelocity = (transform.position - lastGunPosition) / Time.deltaTime;
+        isGunMoving = currentVelocity.magnitude > movementThreshold;
+        lastGunPosition = transform.position;
     }
 
     public void UpdateMoveAnimation(bool isMoving)
