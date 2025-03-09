@@ -1,5 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 
 public class ActionProjectile: MonoBehaviour
 {
@@ -26,7 +29,7 @@ public class ActionProjectile: MonoBehaviour
 
     [Header("Prefabs")]
 
-    [SerializeField] private ParticleSystem snowPrefab;
+    [SerializeField] private GameObject snowPrefab;
 
     [SerializeField] private GameObject explosionPrefab;
 
@@ -48,13 +51,9 @@ public class ActionProjectile: MonoBehaviour
     public void OnLaunchProjectile()
     {
         start = transform.position;
-        start.y -= startingHeightOffset;
-        start += transform.right * 0.2f; 
-
-        Vector3 camForward = transform.forward;
-        Vector3 forwardOnPlane = new Vector3(camForward.x, 0, camForward.z).normalized;
-        end = start + forwardOnPlane * totalDistance;
-        end.y = 0;
+        start.y -= startingHeightOffset; // Offset below eye/camera level
+        start += transform.right * 0.2f; // Start projectile right of center 
+        end = start + transform.forward * totalDistance;
 
         Vector3 midPoint = (start + end) / 2;
         turningPoint = new Vector3(midPoint.x, midPoint.y + projectileHeight, midPoint.z);
@@ -90,12 +89,12 @@ public class ActionProjectile: MonoBehaviour
             yield return null;
         }
 
-        if (snowPrefab != null && ReticlePointer.isLookingAtQR)
+        if (snowPrefab != null) //&& ReticlePointer.isLookingAtQR 
         {
             Vector3 snowPos = transform.position;
-            snowPos.y += 3f;
-            ParticleSystem snowPs = Instantiate<ParticleSystem>(snowPrefab, snowPos, Quaternion.Euler(Vector3.up));
-            snowPs.Play();
+            GameObject snowObject = Instantiate(snowPrefab, snowPos, Quaternion.Euler(Vector3.up));
+            ParticleSystem snowParticles = snowObject.GetComponentInChildren<ParticleSystem>();
+            snowParticles.Play();
         }
 
         GameObject explosionObject = Instantiate(explosionPrefab, transform.position, Quaternion.Euler(Vector3.up));

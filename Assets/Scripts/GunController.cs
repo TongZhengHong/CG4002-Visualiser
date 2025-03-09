@@ -40,7 +40,7 @@ public class GunController : MonoBehaviour
     }
     private Vector3 lastGunPosition;
 
-    private float movementThreshold = 0.03f;
+    private float movementThreshold = 0.05f;
 
     private void Start()
     {

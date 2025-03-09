@@ -101,13 +101,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHeightOffset: 0.3
-  projectileHeight: 1.2
+  projectileHeight: 1
   totalDistance: 2
   duration: 3
   useRandomRotation: 0
   rotateZAxis: 1
   snowPrefab: {fileID: 0}
   explosionPrefab: {fileID: 1485535994140499134, guid: 49b947434b7e64691a3ee9503eb28723,
+    type: 3}
+  indicator: {fileID: 4861083309836117134, guid: a21c8780d1748458899aa15308cb78ba,
     type: 3}
 --- !u!1 &1541672389626359972
 GameObject:

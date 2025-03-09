@@ -161,8 +161,6 @@ public class ReticlePointer: MonoBehaviour
             opponent.SetActive(updatedImage.trackingState == TrackingState.Tracking);
             opponent.transform.position = updatedImage.transform.position;
             opponent.transform.rotation = Quaternion.LookRotation(updatedImage.transform.up, Vector3.up);
-            // opponent.transform.LookAt(updatedImage.transform.position + updatedImage.transform.up);
-            // opponent.transform.position = updatedImage.transform.position;
         }
     }
 

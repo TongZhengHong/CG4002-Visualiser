@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHeightOffset: 0.3
-  projectileHeight: 1.5
+  projectileHeight: 1.2
   totalDistance: 2
   duration: 3
   useRandomRotation: 0

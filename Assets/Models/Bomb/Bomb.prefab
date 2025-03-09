@@ -111,12 +111,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHeightOffset: 0.3
-  projectileHeight: 1.8
+  projectileHeight: 1
   totalDistance: 3
   duration: 3
   useRandomRotation: 1
   rotateZAxis: 1
-  snowPrefab: {fileID: 6642667414350768020, guid: 53a644317b9e043e6a251b3fbb102161,
+  snowPrefab: {fileID: 8686838836097029976, guid: 995d4def3e32f4e94996662423775fe1,
     type: 3}
   explosionPrefab: {fileID: 1436143894506089655, guid: a434cf55250ef4cab928c2bec6e65daf,
     type: 3}
