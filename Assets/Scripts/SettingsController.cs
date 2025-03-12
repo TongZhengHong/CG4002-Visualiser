@@ -23,13 +23,13 @@ public class SettingsController : MonoBehaviour
     public static string VISIBILITY_TOPIC = "MQTT_VisibilityTopic";
 
     [Header("Default Settings")]
-    [SerializeField] private int defaultPlayerNo = 1;
-    [SerializeField] private string defaultBrokerAddress = "localhost";
-    [SerializeField] private int defaultBrokerPort = 1883;
-    [SerializeField] private string defaultMqttUsername = "";
-    [SerializeField] private string defaultMqttPassword = "";
-    [SerializeField] private string defaultActionTopic = "viz/trigger";
-    [SerializeField] private string defaultVisibilityTopic = "viz/player_vis";
+    [SerializeField] private static int defaultPlayerNo = 1;
+    [SerializeField] private static string defaultBrokerAddress = "localhost";
+    [SerializeField] private static int defaultBrokerPort = 1883;
+    [SerializeField] private static string defaultMqttUsername = "";
+    [SerializeField] private static string defaultMqttPassword = "";
+    [SerializeField] private static string defaultActionTopic = "viz/trigger";
+    [SerializeField] private static string defaultVisibilityTopic = "viz/player_vis";
 
     [Header("UI Object References")]
     [SerializeField] private GameObject settingsPanelObject;
@@ -145,4 +145,20 @@ public class SettingsController : MonoBehaviour
 
         Debug.Log($"Loaded MQTT Settings: {address}:{port}, User: {username}");
     }
+
+    public static int GetPlayerNo()
+    {
+        return PlayerPrefs.GetInt(PLAYER_NO, defaultPlayerNo); 
+    }
+
+    public static string GetActionTopic()
+    {
+        return PlayerPrefs.GetString(ACTION_TOPIC, defaultActionTopic);
+    }
+
+    public static string GetVisibilityTopic()
+    {
+        return PlayerPrefs.GetString(VISIBILITY_TOPIC, defaultVisibilityTopic);
+    }
+     
 }

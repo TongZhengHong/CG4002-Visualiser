@@ -42,9 +42,6 @@ public class ReticlePointer: MonoBehaviour
     [Range(-32767, 32767)]
     public int ReticleSortingOrder = 32767;
 
-    [SerializeField]
-    private GameObject opponent;
-
     /// <summary>
     /// The angle in degrees defined between the 2 vectors that depart from the camera and point to
     /// the extremes of the minimum inner diameter of the reticle.
@@ -113,9 +110,7 @@ public class ReticlePointer: MonoBehaviour
     /// </summary>
     private float _reticleOuterDiameter;
 
-    private ARTrackedImageManager trackedImagesManager;
-
-    public static bool isLookingAtQR = false;
+    public static bool isLookingAtOpponent = false;
 
     /// <summary>
     /// Start is called before the first frame update.
@@ -132,60 +127,18 @@ public class ReticlePointer: MonoBehaviour
 
     void Update()
     {
-        if (isLookingAtQR)
+        RaycastHit hit;
+        LayerMask layerMask = LayerMask.GetMask("Opponent");
+        bool didHit = Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask);
+
+        if (didHit != isLookingAtOpponent)
         {
-            ActivateReticle();
-        } else {
-            ResetReticle();
+            isLookingAtOpponent = didHit;
         }
+
+        if (isLookingAtOpponent) ActivateReticle();
+        else ResetReticle();
         UpdateDiameters();
-    }
-
-    void Awake() => trackedImagesManager = FindFirstObjectByType<ARTrackedImageManager>();
-
-    void OnEnable() => trackedImagesManager.trackablesChanged.AddListener(OnChanged);
-
-    void OnDisable() => trackedImagesManager.trackablesChanged.RemoveListener(OnChanged);
-
-    void OnChanged(ARTrackablesChangedEventArgs<ARTrackedImage> eventArgs)
-    {
-        foreach (var newImage in eventArgs.added)
-        {
-            isLookingAtQR = IsCameraLookingAtImage(newImage);
-        }
-
-        foreach (var updatedImage in eventArgs.updated)
-        {
-            isLookingAtQR = IsCameraLookingAtImage(updatedImage);
-
-            opponent.SetActive(updatedImage.trackingState == TrackingState.Tracking);
-            opponent.transform.position = updatedImage.transform.position;
-            opponent.transform.rotation = Quaternion.LookRotation(updatedImage.transform.up, Vector3.up);
-        }
-    }
-
-    private bool IsCameraLookingAtImage(ARTrackedImage trackedImage)
-    {
-        if (trackedImage.trackingState != TrackingState.Tracking) return false;  
-
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); 
-        Plane imagePlane = new Plane(trackedImage.transform.up, trackedImage.transform.position);
-
-        if (imagePlane.Raycast(ray, out float enter)) // Check for valid intersection point in world space
-        {
-            Vector3 hitPoint = ray.GetPoint(enter); // Get the world position where the ray intersects the image plane
-            return IsPointWithinImageBounds(hitPoint, trackedImage);
-        }
-        return false;
-    }
-    private bool IsPointWithinImageBounds(Vector3 hitPoint, ARTrackedImage trackedImage)
-    {
-        // Convert world-space hit point to local-space of the image, origin of plane is the position of tracked image
-        Vector3 localHitPoint = trackedImage.transform.InverseTransformPoint(hitPoint);
-        Vector2 size = trackedImage.size / 2;  // Half size for bounds check
-
-        // Check if the hit point is within the bounds of the image, somehow the vertical component is on the z axis
-        return Mathf.Abs(localHitPoint.x) <= size.x && Mathf.Abs(localHitPoint.z) <= size.y;
     }
 
     /// <summary>

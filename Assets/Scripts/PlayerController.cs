@@ -5,13 +5,15 @@ using TMPro;
 
 public class PlayerController: MonoBehaviour
 {
-    [SerializeField] private int playerNumber;
-
     [SerializeField] private GameObject gunControllerObject;
 
     [SerializeField] private GameObject opponentPlayerObject;
 
-    private PlayerController opponentPlayer;
+    [SerializeField] private GameObject playerSnowPrefab;
+
+    [SerializeField] private GameObject groundReferenceObject;
+
+    private OpponentController opponentPlayer;
 
     private GunController gunController;
     
@@ -28,6 +30,8 @@ public class PlayerController: MonoBehaviour
     private MqttManager mqttManager;
 
     private int currentAction = 1;
+
+    public bool isInSnow = false;
 
     [SerializeField] private TMP_Text actionButtonText;
 
@@ -51,7 +55,7 @@ public class PlayerController: MonoBehaviour
 
         if (opponentPlayerObject != null)
         {
-            opponentPlayer = opponentPlayerObject.GetComponent<PlayerController>();
+            opponentPlayer = opponentPlayerObject.GetComponent<OpponentController>();
         }
     }
 
@@ -59,7 +63,7 @@ public class PlayerController: MonoBehaviour
     {
         if (opponentPlayerObject != null)
         {
-            opponentPlayer = opponentPlayerObject.GetComponent<PlayerController>();
+            opponentPlayer = opponentPlayerObject.GetComponent<OpponentController>();
         }
     }
 
@@ -75,7 +79,7 @@ public class PlayerController: MonoBehaviour
 
     public void PlayAction()
     {
-        int damageDealt = processAction(currentAction);
+        int damageDealt = ProcessAction(currentAction);
         DealDamageToOpponent(damageDealt);
     }
 
@@ -92,37 +96,29 @@ public class PlayerController: MonoBehaviour
 
     private void OnMessageArrivedHandler(MqttObj mqttObject)
     {
-        if (mqttObject.topic != "viz/trigger") return;
-        if (mqttObject.playerNo != playerNumber) {
-            // TODO: Check if opponent hit player with action
-            // TODO: Calculate damage dealt to player
-            // TODO: Make player take damage and respawn if needed
-            return;
-        }
+        int playerNumber = SettingsController.GetPlayerNo();
+        string actionTopic = SettingsController.GetActionTopic();
 
-        int damageDealt = processAction(mqttObject.action);
+        if (mqttObject.topic != actionTopic) return;
+        if (mqttObject.playerNo != playerNumber) return;
 
-        if (mqttObject.playerNo == 1) {
-            DealDamageToOpponent(damageDealt);
-            PublishPlayerViz();
-        }
+        int damageDealt = ProcessAction(mqttObject.payload);
+        if (opponentPlayer.isInSnow) damageDealt += 5;
+        DealDamageToOpponent(damageDealt);
+
+        string visibilityTopic = SettingsController.GetVisibilityTopic();
+        PublishPlayerViz(visibilityTopic, playerNumber);
     }
 
     private void DealDamageToOpponent(int damageDealt)
     {
-        if (damageDealt > 0)
-        {
-            StopAllCoroutines();
-            StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtQR ? "Hit!" : "Miss..."));
-        }
-
-        if (ReticlePointer.isLookingAtQR && opponentPlayer != null)
+        if (ReticlePointer.isLookingAtOpponent && opponentPlayer != null)
         {
             opponentPlayer.TakeDamage(damageDealt);
         } 
     }
 
-    private int processAction(int action)
+    private int ProcessAction(int action)
     {
         if (action < 0 || action > 9) return 0;
         int damageDealt = 0;
@@ -131,6 +127,8 @@ public class PlayerController: MonoBehaviour
         {
             case 1: // SHOOT
                 damageDealt = gunController.ShootGun();
+                StopAllCoroutines();
+                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
                 break;
             case 2: // SHIELD
                 if (shieldController.ActivateShield()) {
@@ -144,19 +142,32 @@ public class PlayerController: MonoBehaviour
                 break; 
             case 5: // BOMB
                 damageDealt = bombController.ThrowBomb();
+                if (ReticlePointer.isLookingAtOpponent) {
+                    PlacePlayerSnow();
+                }
+                StopAllCoroutines();
+                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
                 break; 
             case 6: // BADMINTON
                 damageDealt = actionController.TriggerBadminton();
+                StopAllCoroutines();
+                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
                 break; 
             case 7: // GOLF
                 damageDealt = actionController.TriggerGolf();
+                StopAllCoroutines();
+                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
                 break; 
             case 8: // FENCING
                 damageDealt = actionController.TriggerFencing();
+                StopAllCoroutines();
+                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
                 break; 
             case 9: // BOXING
                 damageDealt = actionController.TriggerBoxing();
-                break;  
+                StopAllCoroutines();
+                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
+                break;
             default:
                 break; 
         }
@@ -191,12 +202,39 @@ public class PlayerController: MonoBehaviour
         hitMissText.gameObject.SetActive(false);
     }
 
-    private void PublishPlayerViz() 
+    private void PublishPlayerViz(string topic, int playerNo) 
     {
         if (mqttManager != null) 
         {
-            Debug.Log("Sending: " + ReticlePointer.isLookingAtQR.ToString());
-            mqttManager.Publish(ReticlePointer.isLookingAtQR.ToString()); //new byte[] { isLookingAtQR ? (byte) 1 : (byte) 0 }
+            Debug.Log("Sending: " + ReticlePointer.isLookingAtOpponent.ToString());
+            mqttManager.PublishVisibility(topic, playerNo, ReticlePointer.isLookingAtOpponent); 
+        }
+    }
+
+    private void PlacePlayerSnow()
+    {
+        Vector3 snowPos = opponentPlayerObject.transform.position;
+        snowPos.y = groundReferenceObject.activeSelf 
+            ? groundReferenceObject.transform.position.y : 0;
+
+        GameObject snowObject = Instantiate(playerSnowPrefab, snowPos, Quaternion.Euler(Vector3.up));
+        ParticleSystem snowParticles = snowObject.GetComponentInChildren<ParticleSystem>();
+        snowParticles.Play();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "OpponentSnow")
+        {
+            TakeDamage(5);
+            isInSnow = true;
+        }
+    }
+    void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "OpponentSnow")
+        {
+            isInSnow = false;
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using M2MqttUnity;
@@ -7,7 +8,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 // C# GET/SET Property and event listener is used to reduce Update overhead in the controlled objects
 public class MqttObj {
     public int playerNo;
-    public int action;
+    public int payload;
 
     private string m_topic;
     public string topic
@@ -82,11 +83,22 @@ public class MqttManager : M2MqttUnityClient
         }
     }
 
-    public void Publish(string message)
+    public void Publish(string topic, string message)
+    {
+        Publish(topic, System.Text.Encoding.UTF8.GetBytes(message));
+    }
+
+    public void PublishVisibility(string topic, int playerNo, bool isVisible)
+    {
+        byte[] message = { Convert.ToByte(playerNo), Convert.ToByte(isVisible) };
+        Publish(topic, message);
+    }
+
+    public void Publish(string topic, byte[] message)
     {
         if (client != null && client.IsConnected) 
         {
-            client.Publish(topicPublish, System.Text.Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+            client.Publish(topic, message, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
             Debug.Log(message + " published on " + topicPublish);
         }
     }
@@ -105,6 +117,9 @@ public class MqttManager : M2MqttUnityClient
     {
         base.OnConnected();
         isConnected = true;
+
+        UnsubscribeTopics();
+        SubscribeTopics();
     }
 
     protected override void OnConnectionFailed(string errorMessage)
@@ -150,7 +165,7 @@ public class MqttManager : M2MqttUnityClient
             mqttObject.playerNo = message[0] == 0x01 ? 1 : 
                 message[0] == 0x02 ? 2 : 0;
             int action = (int) message[1];
-            mqttObject.action = action > 9 ? 0 : action;
+            mqttObject.payload = action > 9 ? 0 : action;
         }
 
         mqttObject.topic = topicReceived;
@@ -189,9 +204,6 @@ public class MqttManager : M2MqttUnityClient
         topicSubscribeList.Add(visibility);
 
         topicPublish = visibility;
-
-        UnsubscribeTopics();
-        SubscribeTopics();
     }
 
 }

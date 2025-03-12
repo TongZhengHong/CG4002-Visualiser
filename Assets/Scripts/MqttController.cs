@@ -22,7 +22,7 @@ public class MqttController : MonoBehaviour
     {
         if (GameObject.FindGameObjectsWithTag(tagMqtt).Length == 0)
         {
-            Debug.LogError("Error finding MqttManager from .");
+            Debug.LogError("Error finding MqttManager from MqttController.");
             return;
         }
         mqttManager = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
@@ -41,11 +41,12 @@ public class MqttController : MonoBehaviour
 
     private void OnMessageArrivedHandler(MqttObj mqttObject) //MqttObj is defined in MqttManager.cs
     {
-        if (mqttObject.topic != "viz/trigger") return;
+        string actionTopic = SettingsController.GetActionTopic();
+        if (mqttObject.topic != actionTopic) return;
 
         string[] actionStrings = { "None", "Shoot", "Shield", "Reload", "Logout", 
             "Bomb", "Badminton", "Golf", "Fencing", "Boxing" };
-        receivedText.text = "Received: \n" + actionStrings[mqttObject.action];
+        receivedText.text = "Received: \n" + actionStrings[mqttObject.payload];
         receivedText.text += " for Player " + mqttObject.playerNo.ToString();
     }
 
