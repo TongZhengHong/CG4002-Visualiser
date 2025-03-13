@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+  <Tracking>
+    <ImageTarget name="qr_code" size="0.250000 0.249088" />
+    <ImageTarget name="target_image" size="0.300000 0.254067" />
+  </Tracking>
+</QCARConfig>
