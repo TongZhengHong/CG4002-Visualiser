@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 767667331450757462}
   - component: {fileID: 2726984765065033033}
   - component: {fileID: 6243783776323994931}
-  - component: {fileID: 4809151257667733772}
-  - component: {fileID: 818556623543228523}
   m_Layer: 0
   m_Name: GolfBall
   m_TagString: Untagged
@@ -112,51 +110,3 @@ MonoBehaviour:
   rotateZAxis: 0
   explosionPrefab: {fileID: 1485535994140499134, guid: 76eb6f2c1effd45ea8daf21c9a246f79,
     type: 3}
---- !u!135 &4809151257667733772
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 728859512734747242}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.012648585
-  m_Center: {x: 0, y: -9.313225e-10, z: 0.009993669}
---- !u!54 &818556623543228523
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 728859512734747242}
-  serializedVersion: 4
-  m_Mass: 0.76
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 1

@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 5744393040466421561}
   - component: {fileID: 6493591571029277381}
   - component: {fileID: 78095071022188792}
-  - component: {fileID: 4313231654874258473}
-  - component: {fileID: 7562263195267697218}
   m_Layer: 0
   m_Name: Shuttecock
   m_TagString: Untagged
@@ -113,56 +111,6 @@ MonoBehaviour:
   rotateZAxis: 1
   explosionPrefab: {fileID: 1485535994140499134, guid: 49b947434b7e64691a3ee9503eb28723,
     type: 3}
---- !u!54 &4313231654874258473
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 595457466838712902}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0.04, y: -0.02, z: 0.01}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 0
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 1
---- !u!136 &7562263195267697218
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 595457466838712902}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.42377135
-  m_Height: 1
-  m_Direction: 2
-  m_Center: {x: -0.35076025, y: 0.4476417, z: -0.5883658}
 --- !u!1 &1541672389626359972
 GameObject:
   m_ObjectHideFlags: 0
