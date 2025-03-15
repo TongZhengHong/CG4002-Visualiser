@@ -111,7 +111,15 @@ public class SettingsController : MonoBehaviour
         if (settingsPanelObject != null)
         {
             settingsPanelObject.SetActive(true);
-            LoadPlayerPrefs();
+
+            (string address, int port, string username, string password, 
+                string action, string visibility, string snow) = LoadPlayerPrefs();
+
+            AssignPlayerPrefsToTextField(address, port, username,
+                password, action, visibility, snow);
+
+            mqttManager.SetMqttSettings(address, port, username,
+                password, action, visibility, snow);
         }
     }
 
@@ -130,7 +138,7 @@ public class SettingsController : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    public void LoadPlayerPrefs()
+    public static (string, int, string, string, string, string, string) LoadPlayerPrefs()
     {
         PlayerNo = PlayerPrefs.GetInt(PLAYER_NO, defaultPlayerNo);
 
@@ -142,6 +150,12 @@ public class SettingsController : MonoBehaviour
         string visibility = PlayerPrefs.GetString(VISIBILITY_TOPIC, defaultVisibilityTopic);
         string snow = PlayerPrefs.GetString(SNOW_TOPIC, defaultSnowTopic);
 
+        return (address, port, username, password, action, visibility, snow);
+    }
+
+    private void AssignPlayerPrefsToTextField(string address, int port, string username, 
+        string password, string action, string visibility, string snow)
+    {
         brokerAddressField.text = address;
         brokerPortField.text = port.ToString();
         usernameField.text = username;
@@ -149,11 +163,6 @@ public class SettingsController : MonoBehaviour
         actionTopicField.text = action;
         visibilityTopicField.text = visibility;
         snowTopicField.text = snow;
-
-        mqttManager.SetMqttSettings(address, port, username,
-            password, action, visibility, snow);
-
-        Debug.Log($"Loaded MQTT Settings: {address}:{port}, User: {username}");
     }
 
     public static int GetPlayerNo()

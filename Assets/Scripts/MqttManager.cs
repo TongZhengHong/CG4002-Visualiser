@@ -68,6 +68,11 @@ public class MqttManager : M2MqttUnityClient
     protected override void Start()
     {
         base.Start();
+
+        (string address, int port, string username, string password, string action, 
+            string visibility, string snow) = SettingsController.LoadPlayerPrefs();
+
+        SetMqttSettings(address, port, username, password, action, visibility, snow);
     }
 
     protected override void Update()
@@ -211,6 +216,8 @@ public class MqttManager : M2MqttUnityClient
         topicSubscribeList.Add(snow);
 
         topicPublish = visibility;
+
+        Debug.Log($"Loaded MQTT Settings: {address}:{port}, User: {username}");
     }
 
 }
