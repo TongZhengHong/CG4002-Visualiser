@@ -94,6 +94,12 @@ public class MqttManager : M2MqttUnityClient
         Publish(topic, message);
     }
 
+    public void PublishSnow(string topic, int playerNo, bool inSnow)
+    {
+        byte[] message = { Convert.ToByte(playerNo), Convert.ToByte(inSnow) };
+        Publish(topic, message);
+    }
+
     public void Publish(string topic, byte[] message)
     {
         if (client != null && client.IsConnected) 
@@ -191,7 +197,7 @@ public class MqttManager : M2MqttUnityClient
     }
 
     public void SetMqttSettings(string address, int port, string username, 
-        string password, string action, string visibility)
+        string password, string action, string visibility, string snow)
     {
         brokerAddress = address;
         brokerPort = port;
@@ -202,6 +208,7 @@ public class MqttManager : M2MqttUnityClient
         topicSubscribeList.Clear();
         topicSubscribeList.Add(action);
         topicSubscribeList.Add(visibility);
+        topicSubscribeList.Add(snow);
 
         topicPublish = visibility;
     }

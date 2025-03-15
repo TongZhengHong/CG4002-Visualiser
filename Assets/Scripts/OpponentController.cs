@@ -11,8 +11,6 @@ public class OpponentController: MonoBehaviour
     
     [SerializeField] private GameObject opponentSnowPrefab;
 
-    [SerializeField] private GameObject groundReferenceObject;
-
     private PlayerController opponentPlayer;
 
     private GunController gunController;
@@ -142,7 +140,7 @@ public class OpponentController: MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "PlayerSnow")
+        if (other.tag == "PlayerSnow" && !isInSnow)
         {
             TakeDamage(5);
             isInSnow = true;
@@ -159,8 +157,7 @@ public class OpponentController: MonoBehaviour
     private void PlaceOpponentSnow()
     {
         Vector3 snowPos = Camera.main.transform.position;
-        snowPos.y = groundReferenceObject.activeSelf 
-            ? groundReferenceObject.transform.position.y : 0;
+        snowPos.y = 0;
 
         GameObject snowObject = Instantiate(opponentSnowPrefab, snowPos, Quaternion.Euler(Vector3.up));
         ParticleSystem snowParticles = snowObject.GetComponentInChildren<ParticleSystem>();
