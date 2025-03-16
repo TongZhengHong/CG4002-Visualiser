@@ -40,7 +40,7 @@ public class GunController : MonoBehaviour
     }
     private Vector3 lastGunPosition;
 
-    private float movementThreshold = 0.05f;
+    private float movementThreshold = 0.07f;
 
     private void Start()
     {
@@ -127,6 +127,15 @@ public class GunController : MonoBehaviour
         if (mazagineController != null)
         {
             mazagineController.OnRespawn();
+        }
+    }
+
+    public void SyncBullets(int bulletCount)
+    {
+        this.bulletCount = bulletCount; 
+        if (mazagineController != null)
+        {
+            mazagineController.SyncBullets(bulletCount);
         }
     }
 

@@ -21,8 +21,8 @@ public class SettingsController : MonoBehaviour
     public static string MQTT_PASSWORD = "MQTT_Password";
     public static string ACTION_TOPIC = "MQTT_ActionTopic";
     public static string VISIBILITY_TOPIC = "MQTT_VisibilityTopic";
-
     public static string SNOW_TOPIC = "MQTT_SnowTopic";
+    public static string BACKEND_TOPIC = "MQTT_BackendTopic";
 
     [Header("Default Settings")]
     [SerializeField] private static int defaultPlayerNo = 1;
@@ -32,8 +32,8 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private static string defaultMqttPassword = "";
     [SerializeField] private static string defaultActionTopic = "viz/trigger";
     [SerializeField] private static string defaultVisibilityTopic = "viz/player_vis";
-
     [SerializeField] private static string defaultSnowTopic = "viz/snow";
+    [SerializeField] private static string defaultBackendTopic = "backend/state";
 
     [Header("UI Object References")]
     [SerializeField] private GameObject settingsPanelObject;
@@ -44,6 +44,7 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private TMP_InputField actionTopicField;
     [SerializeField] private TMP_InputField visibilityTopicField;
     [SerializeField] private TMP_InputField snowTopicField;
+    [SerializeField] private TMP_InputField backendTopicField;
 
     [SerializeField] private Button saveButton;
     [SerializeField] private Button closeButton;
@@ -81,7 +82,8 @@ public class SettingsController : MonoBehaviour
             passwordField.text,
             actionTopicField.text,
             visibilityTopicField.text,
-            snowTopicField.text
+            snowTopicField.text,
+            backendTopicField.text
         );
 
         SavePlayerPrefs(
@@ -92,7 +94,8 @@ public class SettingsController : MonoBehaviour
             passwordField.text,
             actionTopicField.text,
             visibilityTopicField.text,
-            snowTopicField.text
+            snowTopicField.text,
+            backendTopicField.text
         );
 
         HandleClose();
@@ -113,18 +116,18 @@ public class SettingsController : MonoBehaviour
             settingsPanelObject.SetActive(true);
 
             (string address, int port, string username, string password, 
-                string action, string visibility, string snow) = LoadPlayerPrefs();
+                string action, string visibility, string snow, string backend) = LoadPlayerPrefs();
 
             AssignPlayerPrefsToTextField(address, port, username,
-                password, action, visibility, snow);
+                password, action, visibility, snow, backend);
 
             mqttManager.SetMqttSettings(address, port, username,
-                password, action, visibility, snow);
+                password, action, visibility, snow, backend);
         }
     }
 
     public void SavePlayerPrefs(int playerNo, string address, int port, string username, 
-        string password, string action, string visibility, string snow)
+        string password, string action, string visibility, string snow, string backend)
     {
         PlayerPrefs.SetInt(PLAYER_NO, playerNo);
         PlayerPrefs.SetString(BROKER_ADDRESS, address);
@@ -133,12 +136,13 @@ public class SettingsController : MonoBehaviour
         PlayerPrefs.SetString(MQTT_PASSWORD, password); 
         PlayerPrefs.SetString(ACTION_TOPIC, action); 
         PlayerPrefs.SetString(VISIBILITY_TOPIC, visibility); 
-        PlayerPrefs.SetString(SNOW_TOPIC, snow); 
+        PlayerPrefs.SetString(SNOW_TOPIC, snow);
+        PlayerPrefs.SetString(BACKEND_TOPIC, backend);
 
         PlayerPrefs.Save();
     }
 
-    public static (string, int, string, string, string, string, string) LoadPlayerPrefs()
+    public static (string, int, string, string, string, string, string, string) LoadPlayerPrefs()
     {
         PlayerNo = PlayerPrefs.GetInt(PLAYER_NO, defaultPlayerNo);
 
@@ -149,12 +153,13 @@ public class SettingsController : MonoBehaviour
         string action = PlayerPrefs.GetString(ACTION_TOPIC, defaultActionTopic);
         string visibility = PlayerPrefs.GetString(VISIBILITY_TOPIC, defaultVisibilityTopic);
         string snow = PlayerPrefs.GetString(SNOW_TOPIC, defaultSnowTopic);
+        string backend = PlayerPrefs.GetString(BACKEND_TOPIC, defaultBackendTopic);
 
-        return (address, port, username, password, action, visibility, snow);
+        return (address, port, username, password, action, visibility, snow, backend);
     }
 
     private void AssignPlayerPrefsToTextField(string address, int port, string username, 
-        string password, string action, string visibility, string snow)
+        string password, string action, string visibility, string snow, string backend)
     {
         brokerAddressField.text = address;
         brokerPortField.text = port.ToString();
@@ -163,6 +168,7 @@ public class SettingsController : MonoBehaviour
         actionTopicField.text = action;
         visibilityTopicField.text = visibility;
         snowTopicField.text = snow;
+        backendTopicField.text = backend;
     }
 
     public static int GetPlayerNo()
@@ -183,6 +189,11 @@ public class SettingsController : MonoBehaviour
     public static string GetSnowTopic()
     {
         return PlayerPrefs.GetString(SNOW_TOPIC, defaultSnowTopic);
+    }
+
+    public static string GetBackendTopic()
+    {
+        return PlayerPrefs.GetString(BACKEND_TOPIC, defaultBackendTopic);
     }
      
 }

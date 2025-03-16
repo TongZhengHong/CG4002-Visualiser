@@ -92,4 +92,13 @@ public class PlayerInfo : MonoBehaviour
         healthSlider.value = minimum + newVal * 9;
     }
 
+    public void SyncHealthAndShield(int health, int shieldHealth)
+    {
+        currentHealth = health;
+        currentShield = shieldHealth;
+        
+        SetHealthSlider(health);
+        SetShieldSlider(shieldHealth);
+    }
+
 }

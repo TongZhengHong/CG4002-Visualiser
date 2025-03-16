@@ -6,17 +6,22 @@ using TMPro;
 
 public class MqttController : MonoBehaviour
 {
-    [SerializeField]
-    private TMP_Text isConnectedText;
+    [SerializeField] private TMP_Text isConnectedText;
 
-    [SerializeField]
-    private TMP_Text connectButtonText;
+    [SerializeField] private TMP_Text connectButtonText;
 
-    [SerializeField]
-    private TMP_Text receivedText;
+    [SerializeField] private TMP_Text receivedText;
+
+    [SerializeField] private GameObject playerObject;
+    private PlayerController player;
+
+    [SerializeField] private GameObject opponentObject;
+    private OpponentController opponentPlayer;
 
     private string tagMqtt = "MQTT";
     private MqttManager mqttManager;
+
+    private int previousStateCount = -1;
 
     void Start()
     {
@@ -28,6 +33,9 @@ public class MqttController : MonoBehaviour
         mqttManager = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
         mqttManager.OnMessageArrived += OnMessageArrivedHandler;
         mqttManager.OnConnectionSucceeded += OnConnectionChanged;
+
+        opponentPlayer = opponentObject.GetComponent<OpponentController>();
+        player = playerObject.GetComponent<PlayerController>();
     }
 
     void OnDisable()
@@ -42,12 +50,38 @@ public class MqttController : MonoBehaviour
     private void OnMessageArrivedHandler(MqttObj mqttObject) //MqttObj is defined in MqttManager.cs
     {
         string actionTopic = SettingsController.GetActionTopic();
+        string backendTopic = SettingsController.GetBackendTopic();
+
+        if (mqttObject.topic == backendTopic) 
+        {
+            if (mqttObject.ident == previousStateCount + 1) // Check next payload is of correct sequence
+            {
+                int playerHealth = (int) mqttObject.payload[0];
+                int playerBullets = (int) mqttObject.payload[1];
+                int playerBomb = (int) mqttObject.payload[2];
+                int playerShieldHealth = (int) mqttObject.payload[3];
+                int playerDeaths = (int) mqttObject.payload[4];
+                int playerShields = (int) mqttObject.payload[5];
+                int opponentHealth = (int) mqttObject.payload[6];
+                int opponentBullets = (int) mqttObject.payload[7];
+                int opponentBomb = (int) mqttObject.payload[8];
+                int opponentShieldHealth = (int) mqttObject.payload[9];
+                int opponentDeaths = (int) mqttObject.payload[10];
+                int opponentShields = (int) mqttObject.payload[11];
+
+                player.SyncPlayerInfo(playerHealth, playerBullets, playerBomb, playerShieldHealth, playerDeaths, playerShields);
+                opponentPlayer.SyncOpponentInfo(opponentHealth, opponentBullets, opponentBomb, opponentShieldHealth, opponentDeaths, opponentShields);
+
+                previousStateCount = mqttObject.ident == 255 ? -1 : mqttObject.ident;
+            }
+        }
+
         if (mqttObject.topic != actionTopic) return;
 
         string[] actionStrings = { "None", "Shoot", "Shield", "Reload", "Logout", 
             "Bomb", "Badminton", "Golf", "Fencing", "Boxing" };
-        receivedText.text = "Received: \n" + actionStrings[mqttObject.payload];
-        receivedText.text += " for Player " + mqttObject.playerNo.ToString();
+        receivedText.text = "Received: \n" + actionStrings[mqttObject.payload[0]];
+        receivedText.text += " for Player " + mqttObject.ident.ToString();
     }
 
     private void OnConnectionChanged(bool isConnected) 

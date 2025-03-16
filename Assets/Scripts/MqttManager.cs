@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using M2MqttUnity;
@@ -7,30 +8,15 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 // Store message received and topic subscribed, so we can select the right object from the controller
 // C# GET/SET Property and event listener is used to reduce Update overhead in the controlled objects
 public class MqttObj {
-    public int playerNo;
-    public int payload;
-
-    private string m_topic;
-    public string topic
-    {
-        get
-        {
-            return m_topic;
-        }
-        
-        set
-        {
-            if (m_topic == value) return;
-            m_topic = value;
-        }
-    }
+    public int ident;
+    public byte[] payload;
+    public string topic;
 }
 
 public class MqttManager : M2MqttUnityClient
 {
     public List<string> topicSubscribeList = new List<string>();
 
-    private string topicPublish = "viz/player_vis";
 
     //new mqttObj is created to store message received and topic subscribed
     MqttObj mqttObject = new MqttObj();
@@ -63,16 +49,14 @@ public class MqttManager : M2MqttUnityClient
 
     private List<MqttObj> eventMessages = new List<MqttObj>();
 
-
-
     protected override void Start()
     {
         base.Start();
 
         (string address, int port, string username, string password, string action, 
-            string visibility, string snow) = SettingsController.LoadPlayerPrefs();
+            string visibility, string snow, string backend) = SettingsController.LoadPlayerPrefs();
 
-        SetMqttSettings(address, port, username, password, action, visibility, snow);
+        SetMqttSettings(address, port, username, password, action, visibility, snow, backend);
     }
 
     protected override void Update()
@@ -110,7 +94,6 @@ public class MqttManager : M2MqttUnityClient
         if (client != null && client.IsConnected) 
         {
             client.Publish(topic, message, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-            Debug.Log(message + " published on " + topicPublish);
         }
     }
 
@@ -171,12 +154,16 @@ public class MqttManager : M2MqttUnityClient
 
     protected override void DecodeMessage(string topicReceived, byte[] message)
     {
+        string backendTopic = SettingsController.GetBackendTopic();
         if (message.Length >= 2)
         {
-            mqttObject.playerNo = message[0] == 0x01 ? 1 : 
-                message[0] == 0x02 ? 2 : 0;
-            int action = (int) message[1];
-            mqttObject.payload = action > 9 ? 0 : action;
+            if (topicReceived == backendTopic) {
+                mqttObject.ident = (int) ((message[1] << 8) | message[0]);
+                mqttObject.payload = message.Skip(2).ToArray();
+            } else {
+                mqttObject.ident = (int) message[0];
+                mqttObject.payload = message.Skip(1).ToArray();
+            }
         }
 
         mqttObject.topic = topicReceived;
@@ -202,7 +189,7 @@ public class MqttManager : M2MqttUnityClient
     }
 
     public void SetMqttSettings(string address, int port, string username, 
-        string password, string action, string visibility, string snow)
+        string password, string action, string visibility, string snow, string backend)
     {
         brokerAddress = address;
         brokerPort = port;
@@ -214,8 +201,7 @@ public class MqttManager : M2MqttUnityClient
         topicSubscribeList.Add(action);
         topicSubscribeList.Add(visibility);
         topicSubscribeList.Add(snow);
-
-        topicPublish = visibility;
+        topicSubscribeList.Add(backend);
 
         Debug.Log($"Loaded MQTT Settings: {address}:{port}, User: {username}");
     }

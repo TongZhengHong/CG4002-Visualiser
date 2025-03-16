@@ -69,4 +69,10 @@ public class BombController: MonoBehaviour
         }
     }
 
+    public void SyncBomb(int bombCount)
+    {
+        this.bombCount = bombCount;
+        UpdateBombCount(bombCount);
+    }
+
 }

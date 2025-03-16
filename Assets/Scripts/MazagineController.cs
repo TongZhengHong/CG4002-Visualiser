@@ -66,6 +66,16 @@ public class MazagineController: MonoBehaviour
         bulletCountText.color = originalTextColor; 
     }
 
+    public void SyncBullets(int bulletCount)
+    {
+        this.bulletCount = bulletCount;
+        bulletCountText.text = bulletCount.ToString();
+        for (int i = 0; i < bulletList.Length; i++)
+        {
+            bulletList[i].SetActive(i < bulletCount);
+        }
+    }
+
     public IEnumerator ShakeText(float duration, float magnitude)
     {
         Vector3 originalPosition = bulletCountText.gameObject.transform.localPosition;

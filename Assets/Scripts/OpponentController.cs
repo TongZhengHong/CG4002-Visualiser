@@ -57,16 +57,16 @@ public class OpponentController: MonoBehaviour
         string actionTopic = SettingsController.GetActionTopic();
         string visibilityTopic = SettingsController.GetVisibilityTopic();
 
-        if (mqttObject.playerNo != GetOpponentNo()) return;
+        if (mqttObject.ident != GetOpponentNo()) return;
 
         if (mqttObject.topic == actionTopic)
         {
-            prevDamage = ProcessAction(mqttObject.payload);
-            prevAction = mqttObject.payload;
+            prevDamage = ProcessAction(mqttObject.payload[0]);
+            prevAction = mqttObject.payload[0];
         }
         else if (mqttObject.topic == visibilityTopic)
         {
-            if (mqttObject.payload == 1) // Opponent saw player 
+            if (mqttObject.payload[0] == 1) // Opponent saw player 
             {
                 if (opponentPlayer.isInSnow) prevDamage += 5;
 
@@ -79,6 +79,14 @@ public class OpponentController: MonoBehaviour
             prevDamage = 0;
             prevAction = 0;
         }
+    }
+
+    public void SyncOpponentInfo(int health, int bullets, int bomb, int shieldHealth, int deaths, int shieldCount)
+    {
+        playerInfo.SyncHealthAndShield(health, shieldHealth);
+        shieldController.SyncShield(shieldCount, shieldHealth);
+        gunController.SyncBullets(bullets);
+        bombController.SyncBomb(bomb);
     }
 
     public void TakeDamage(int damage)

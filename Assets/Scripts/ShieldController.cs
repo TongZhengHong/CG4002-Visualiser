@@ -32,14 +32,21 @@ public class ShieldController : MonoBehaviour
 
     private void OnShieldDestroy() 
     {
-        StartCoroutine(CloseShield());
+        if (shieldAnimator != null)
+            StartCoroutine(CloseShield());
+        else
+            playerShield.SetActive(false);
     }
 
     public void OnRespawn() 
     {
         shieldCount = maxShield;
         UpdateShieldCount(maxShield);
-        StartCoroutine(CloseShield());
+
+        if (shieldAnimator != null)
+            StartCoroutine(CloseShield());
+        else
+            playerShield.SetActive(false);
     }
 
     public IEnumerator CloseShield()
@@ -63,7 +70,9 @@ public class ShieldController : MonoBehaviour
 
         shieldCount--;
         playerShield.SetActive(true);
-        shieldAnimator.SetTrigger("OpenShield");
+        if (shieldAnimator != null) {
+            shieldAnimator.SetTrigger("OpenShield");
+        }
         UpdateShieldCount(shieldCount);
 
         return true;
@@ -74,6 +83,30 @@ public class ShieldController : MonoBehaviour
         if (shieldBombSection != null) 
         {
             shieldBombSection.UpdateShieldCount(count);
+        }
+    }
+
+    public void SyncShield(int shieldCount, int shieldHealth)
+    {
+        if (this.shieldCount != shieldCount)
+        {
+            this.shieldCount = shieldCount;
+            UpdateShieldCount(shieldCount);
+        }
+
+        if (!playerShield.activeSelf && shieldHealth > 0)
+        {
+            playerShield.SetActive(true);
+            if (shieldAnimator != null) {
+                shieldAnimator.SetTrigger("OpenShield");
+            }
+        }
+        else if (playerShield.activeSelf && shieldHealth == 0)
+        {
+            if (shieldAnimator != null)
+                StartCoroutine(CloseShield());
+            else
+                playerShield.SetActive(false);
         }
     }
 

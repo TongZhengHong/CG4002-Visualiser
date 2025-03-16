@@ -51,18 +51,7 @@ public class PlayerController: MonoBehaviour
         actionController = GetComponent<ActionController>();
         gunController = gunControllerObject.GetComponent<GunController>();
 
-        if (opponentPlayerObject != null)
-        {
-            opponentPlayer = opponentPlayerObject.GetComponent<OpponentController>();
-        }
-    }
-
-    void LateUpdate()
-    {
-        if (opponentPlayerObject != null)
-        {
-            opponentPlayer = opponentPlayerObject.GetComponent<OpponentController>();
-        }
+        opponentPlayer = opponentPlayerObject.GetComponent<OpponentController>();
     }
 
     public void TakeDamage(int damage)
@@ -98,14 +87,22 @@ public class PlayerController: MonoBehaviour
         string actionTopic = SettingsController.GetActionTopic();
 
         if (mqttObject.topic != actionTopic) return;
-        if (mqttObject.playerNo != playerNumber) return;
+        if (mqttObject.ident != playerNumber) return;
 
-        int damageDealt = ProcessAction(mqttObject.payload);
+        int damageDealt = ProcessAction(mqttObject.payload[0]);
         if (opponentPlayer.isInSnow) damageDealt += 5;
         DealDamageToOpponent(damageDealt);
 
         string visibilityTopic = SettingsController.GetVisibilityTopic();
         PublishPlayerViz(visibilityTopic, playerNumber);
+    }
+
+    public void SyncPlayerInfo(int health, int bullets, int bomb, int shieldHealth, int deaths, int shieldCount)
+    {
+        playerInfo.SyncHealthAndShield(health, shieldHealth);
+        shieldController.SyncShield(shieldCount, shieldHealth);
+        gunController.SyncBullets(bullets);
+        bombController.SyncBomb(bomb);
     }
 
     private void DealDamageToOpponent(int damageDealt)
