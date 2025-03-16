@@ -4238,6 +4238,7 @@ MonoBehaviour:
   backendTopicField: {fileID: 2909266}
   saveButton: {fileID: 1944206576}
   closeButton: {fileID: 141084097}
+  playerNumberText: {fileID: 507513864}
 --- !u!4 &385486386
 Transform:
   m_ObjectHideFlags: 0

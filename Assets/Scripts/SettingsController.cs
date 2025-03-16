@@ -49,6 +49,8 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private Button saveButton;
     [SerializeField] private Button closeButton;
 
+    [SerializeField] private TMP_Text playerNumberText;
+
     void Awake()
     {
         saveButton.onClick.AddListener(HandleSave);
@@ -98,6 +100,7 @@ public class SettingsController : MonoBehaviour
             backendTopicField.text
         );
 
+        playerNumberText.text = "P" + PlayerNo.ToString();
         HandleClose();
     }
 

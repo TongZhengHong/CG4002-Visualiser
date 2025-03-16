@@ -14,6 +14,8 @@ public class PlayerInfo : MonoBehaviour
 
     [SerializeField] private TMP_Text shieldText;
 
+    [SerializeField] private TMP_Text playerNumberText;
+
     private int currentHealth = 0;
 
     private int currentShield = 0;
@@ -37,6 +39,12 @@ public class PlayerInfo : MonoBehaviour
 
         SetHealthSlider(currentHealth);
         SetShieldSlider(currentShield);
+
+        if (playerNumberText != null)
+        {
+            int playerNo = SettingsController.GetPlayerNo();
+            playerNumberText.text = "P" + playerNo.ToString();
+        }
     }
 
     public bool IsDeadAfterDamage(int damage)
@@ -96,7 +104,7 @@ public class PlayerInfo : MonoBehaviour
     {
         currentHealth = health;
         currentShield = shieldHealth;
-        
+
         SetHealthSlider(health);
         SetShieldSlider(shieldHealth);
     }
