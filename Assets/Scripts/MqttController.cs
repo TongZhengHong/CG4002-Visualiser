@@ -21,7 +21,7 @@ public class MqttController : MonoBehaviour
     private string tagMqtt = "MQTT";
     private MqttManager mqttManager;
 
-    private int previousStateCount = -1;
+    private int previousStateCount = 0;
 
     void Start()
     {
@@ -52,9 +52,13 @@ public class MqttController : MonoBehaviour
         string actionTopic = SettingsController.GetActionTopic();
         string backendTopic = SettingsController.GetBackendTopic();
 
+        Debug.Log(mqttObject.topic + " " + mqttObject.ident);
         if (mqttObject.topic == backendTopic) 
         {
-            if (mqttObject.ident == previousStateCount + 1) // Check next payload is of correct sequence
+            receivedText.text += "\n Update State " + mqttObject.ident.ToString() + " ";
+            receivedText.text += (mqttObject.ident > previousStateCount).ToString();
+
+            if (mqttObject.ident > previousStateCount) // Check next payload after previous
             {
                 int playerHealth = (int) mqttObject.payload[0];
                 int playerBullets = (int) mqttObject.payload[1];
@@ -72,7 +76,7 @@ public class MqttController : MonoBehaviour
                 player.SyncPlayerInfo(playerHealth, playerBullets, playerBomb, playerShieldHealth, playerDeaths, playerShields);
                 opponentPlayer.SyncOpponentInfo(opponentHealth, opponentBullets, opponentBomb, opponentShieldHealth, opponentDeaths, opponentShields);
 
-                previousStateCount = mqttObject.ident == 255 ? -1 : mqttObject.ident;
+                previousStateCount = mqttObject.ident;
             }
         }
 
