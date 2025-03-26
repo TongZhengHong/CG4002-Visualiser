@@ -110,14 +110,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72d1d81c9a6234ced8d3ffef79fb18dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHeightOffset: 0.3
-  projectileHeight: 1
+  startingHeightOffset: 0.2
+  projectileHeight: 2.3
   totalDistance: 3
   duration: 3
-  launchForce: 3
-  gravityReduction: 3
-  heightOffset: 0.5
   useRandomRotation: 1
   rotateZAxis: 1
-  explosionPrefab: {fileID: 1436143894506089655, guid: a434cf55250ef4cab928c2bec6e65daf,
+  explosionPrefab: {fileID: 8021352855358889290, guid: a434cf55250ef4cab928c2bec6e65daf,
     type: 3}

@@ -100,13 +100,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHeightOffset: 0.3
-  projectileHeight: 1.2
-  totalDistance: 2
+  projectileHeight: 2.5
+  totalDistance: 3
   duration: 3
-  launchForce: 3.31
-  gravityReduction: 11.76
-  heightOffset: 0.5
   useRandomRotation: 0
   rotateZAxis: 0
-  explosionPrefab: {fileID: 1485535994140499134, guid: 76eb6f2c1effd45ea8daf21c9a246f79,
+  explosionPrefab: {fileID: 6344426033412368405, guid: 01954b3af30654bfa9364979658a0e6d,
     type: 3}
