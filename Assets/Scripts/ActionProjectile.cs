@@ -64,9 +64,9 @@ public class ActionProjectile: MonoBehaviour
         float elapsed = 0f;
         float rotationSpeed = 300f; // degrees per second
 
-        float xRotation = Random.Range(0.7f, 1.5f); 
+        float xRotation = Random.Range(150f, 300f); 
         float yDirection = Random.Range(0, 1f) > 0.5 ? -1 : 1;
-        float yRotation = Random.Range(0.5f, 0.1f) * yDirection; 
+        float yRotation = Random.Range(100f, 200f) * yDirection;
 
         if (!useRandomRotation) 
         {
@@ -80,7 +80,7 @@ public class ActionProjectile: MonoBehaviour
             float zRotation = rotateZAxis ? rotationSpeed * Time.deltaTime : 0;
 
             transform.position = Evaluate(progress);
-            transform.Rotate(xRotation, yRotation, zRotation);
+            transform.Rotate(xRotation * Time.deltaTime, yRotation * Time.deltaTime, zRotation);
 
             elapsed += Time.deltaTime;
             yield return null;
