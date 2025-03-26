@@ -210,10 +210,7 @@ public class PlayerController: MonoBehaviour
     {
         Vector3 snowPos = opponentPlayerObject.transform.position;
         snowPos.y = 0;
-
-        GameObject snowObject = Instantiate(playerSnowPrefab, snowPos, Quaternion.Euler(Vector3.up));
-        ParticleSystem snowParticles = snowObject.GetComponentInChildren<ParticleSystem>();
-        snowParticles.Play();
+        Instantiate(playerSnowPrefab, snowPos, Quaternion.Euler(Vector3.up));
     }
 
     void OnTriggerEnter(Collider other)

@@ -23,7 +23,7 @@ public class ActionController : MonoBehaviour
     {
         if (golfPrefab == null) return 0;
 
-        GameObject golfInstance = Instantiate(golfPrefab, transform.position, transform.rotation);
+        GameObject golfInstance = Instantiate(golfPrefab, startingTransform.position, startingTransform.rotation);
         ActionProjectile golf = golfInstance.GetComponent<ActionProjectile>();
         golf.OnLaunchProjectile();
         return GOLF_DAMAGE;

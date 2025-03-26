@@ -21,8 +21,6 @@ public class ActionProjectile: MonoBehaviour
 
     [SerializeField] private float duration = 3f;
 
-    // [SerializeField] private bool useFixedDistance = false;
-
     [Header("Animation Options")]
     [SerializeField] private bool useRandomRotation = false;
     [SerializeField] private bool rotateZAxis = false;
@@ -52,6 +50,7 @@ public class ActionProjectile: MonoBehaviour
         start.y -= startingHeightOffset; // Offset below eye/camera level
         start += transform.right * 0.2f; // Start projectile right of center 
         end = start + transform.forward * totalDistance;
+        end.y = 0;
 
         Vector3 midPoint = (start + end) / 2;
         turningPoint = new Vector3(midPoint.x, midPoint.y + projectileHeight, midPoint.z);
@@ -87,12 +86,9 @@ public class ActionProjectile: MonoBehaviour
             yield return null;
         }
 
-        GameObject explosionObject = Instantiate(explosionPrefab, transform.position, Quaternion.Euler(Vector3.up));
-        ParticleSystem[] explosionParticles = explosionObject.GetComponentsInChildren<ParticleSystem>();
-        foreach (ParticleSystem ps in explosionParticles) ps.Play();
-
-        yield return new WaitForSeconds(0.3f);
-        Destroy(explosionObject);
+        GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.Euler(Vector3.up));
+        yield return new WaitForSeconds(0.4f);
+        Destroy(explosion);
         Destroy(gameObject);
     }
 

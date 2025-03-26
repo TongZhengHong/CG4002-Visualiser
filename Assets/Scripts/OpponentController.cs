@@ -166,10 +166,7 @@ public class OpponentController: MonoBehaviour
     {
         Vector3 snowPos = Camera.main.transform.position;
         snowPos.y = 0;
-
-        GameObject snowObject = Instantiate(opponentSnowPrefab, snowPos, Quaternion.Euler(Vector3.up));
-        ParticleSystem snowParticles = snowObject.GetComponentInChildren<ParticleSystem>();
-        snowParticles.Play();
+        Instantiate(opponentSnowPrefab, snowPos, Quaternion.Euler(Vector3.up));
     }
 
 }

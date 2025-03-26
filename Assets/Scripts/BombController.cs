@@ -7,35 +7,24 @@ public class BombController: MonoBehaviour
 
     [SerializeField] private GameObject bombCountObject;
 
+    [SerializeField] private Transform startingTransform;
+
     private ShieldBombSection shieldBombSection;
 
     private int maxBomb = 2;
 
     private int bombCount = 0;
 
-    private Camera cam;
-
-    private Vector3 camPos;
-
-    private Quaternion camRotation;
-
     private int BOMB_DAMAGE = 5;
 
     void Start()
     {
-        cam = Camera.main;
         bombCount = maxBomb;
 
         if (bombCountObject != null)
         {
             shieldBombSection = bombCountObject.GetComponent<ShieldBombSection>();
         }
-    }
-
-    void LateUpdate()
-    {
-        camPos = cam.transform.position;
-        camRotation = cam.transform.rotation;
     }
 
     public int ThrowBomb()
@@ -46,7 +35,7 @@ public class BombController: MonoBehaviour
             return 0;
         } 
 
-        GameObject bombInstance = Instantiate(bombPrefab, camPos, camRotation);
+        GameObject bombInstance = Instantiate(bombPrefab, startingTransform.position, startingTransform.rotation);
         ActionProjectile bomb = bombInstance.GetComponent<ActionProjectile>();
         bomb.OnLaunchProjectile();
 
