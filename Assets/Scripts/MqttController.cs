@@ -6,6 +6,8 @@ using TMPro;
 
 public class MqttController : MonoBehaviour
 {
+    [SerializeField] private string backendReadyTopic = "backend/ready";
+
     [SerializeField] private TMP_Text isConnectedText;
 
     [SerializeField] private TMP_Text connectButtonText;
@@ -47,38 +49,29 @@ public class MqttController : MonoBehaviour
         }
     }
 
-    private void OnMessageArrivedHandler(MqttObj mqttObject) //MqttObj is defined in MqttManager.cs
+    private void OnMessageArrivedHandler(MqttObj mqttObject) 
     {
         string actionTopic = SettingsController.GetActionTopic();
-        string backendTopic = SettingsController.GetBackendTopic();
+        string backendStateTopic = SettingsController.GetBackendTopic();
 
         Debug.Log(mqttObject.topic + " " + mqttObject.ident);
-        if (mqttObject.topic == backendTopic) 
+        if (mqttObject.topic == backendStateTopic || mqttObject.topic == backendReadyTopic) 
         {
+            if (mqttObject.topic == backendReadyTopic) // Reset count to trigger update 
+            {
+                receivedText.text = "Received:";
+                previousStateCount = 0;
+            }
+
             receivedText.text += "\n Update State " + mqttObject.ident.ToString() + " ";
-            receivedText.text += (mqttObject.ident > previousStateCount).ToString();
+            receivedText.text += mqttObject.ident > previousStateCount ? "Success" : "Fail";
 
             if (mqttObject.ident > previousStateCount) // Check next payload after previous
             {
-                int playerHealth = (int) mqttObject.payload[0];
-                int playerBullets = (int) mqttObject.payload[1];
-                int playerBomb = (int) mqttObject.payload[2];
-                int playerShieldHealth = (int) mqttObject.payload[3];
-                int playerDeaths = (int) mqttObject.payload[4];
-                int playerShields = (int) mqttObject.payload[5];
-                int opponentHealth = (int) mqttObject.payload[6];
-                int opponentBullets = (int) mqttObject.payload[7];
-                int opponentBomb = (int) mqttObject.payload[8];
-                int opponentShieldHealth = (int) mqttObject.payload[9];
-                int opponentDeaths = (int) mqttObject.payload[10];
-                int opponentShields = (int) mqttObject.payload[11];
-
-                player.SyncPlayerInfo(playerHealth, playerBullets, playerBomb, playerShieldHealth, playerDeaths, playerShields);
-                opponentPlayer.SyncOpponentInfo(opponentHealth, opponentBullets, opponentBomb, opponentShieldHealth, opponentDeaths, opponentShields);
-
+                UpdateGameState(mqttObject);
                 previousStateCount = mqttObject.ident;
             }
-        }
+        } 
 
         if (mqttObject.topic != actionTopic) return;
 
@@ -86,6 +79,30 @@ public class MqttController : MonoBehaviour
             "Bomb", "Badminton", "Golf", "Fencing", "Boxing" };
         receivedText.text = "Received: \n" + actionStrings[mqttObject.payload[0]];
         receivedText.text += " for Player " + mqttObject.ident.ToString();
+    }
+
+    private void UpdateGameState(MqttObj mqttObject)
+    {
+        int oneHealth = (int) mqttObject.payload[0];
+        int oneBullets = (int) mqttObject.payload[1];
+        int oneBomb = (int) mqttObject.payload[2];
+        int oneShieldHealth = (int) mqttObject.payload[3];
+        int oneDeaths = (int) mqttObject.payload[4];
+        int oneShields = (int) mqttObject.payload[5];
+        int twoHealth = (int) mqttObject.payload[6];
+        int twoBullets = (int) mqttObject.payload[7];
+        int twoBomb = (int) mqttObject.payload[8];
+        int twoShieldHealth = (int) mqttObject.payload[9];
+        int twoDeaths = (int) mqttObject.payload[10];
+        int twoShields = (int) mqttObject.payload[11];
+
+        if (SettingsController.GetPlayerNo() == 1) {
+            player.SyncPlayerInfo(oneHealth, oneBullets, oneBomb, oneShieldHealth, oneDeaths, oneShields);
+            opponentPlayer.SyncOpponentInfo(twoHealth, twoBullets, twoBomb, twoShieldHealth, twoDeaths, twoShields);
+        } else if (SettingsController.GetPlayerNo() == 2) {
+            player.SyncPlayerInfo(twoHealth, twoBullets, twoBomb, twoShieldHealth, twoDeaths, twoShields);
+            opponentPlayer.SyncOpponentInfo(oneHealth, oneBullets, oneBomb, oneShieldHealth, oneDeaths, oneShields);
+        }
     }
 
     private void OnConnectionChanged(bool isConnected) 
