@@ -15,8 +15,9 @@ public class MqttObj {
 
 public class MqttManager : M2MqttUnityClient
 {
+    [SerializeField] public string backendReadyTopic = "backend/ready";
+    
     public List<string> topicSubscribeList = new List<string>();
-
 
     //new mqttObj is created to store message received and topic subscribed
     MqttObj mqttObject = new MqttObj();
@@ -131,6 +132,7 @@ public class MqttManager : M2MqttUnityClient
     {
         if (client == null || !client.IsConnected) return;
 
+        topicSubscribeList.Add(backendReadyTopic);
         foreach (string item in topicSubscribeList)  
         {
             client.Subscribe(new string[] { item }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });   

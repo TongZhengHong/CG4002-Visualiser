@@ -6,8 +6,6 @@ using TMPro;
 
 public class MqttController : MonoBehaviour
 {
-    [SerializeField] private string backendReadyTopic = "backend/ready";
-
     [SerializeField] private TMP_Text isConnectedText;
 
     [SerializeField] private TMP_Text connectButtonText;
@@ -53,14 +51,16 @@ public class MqttController : MonoBehaviour
     {
         string actionTopic = SettingsController.GetActionTopic();
         string backendStateTopic = SettingsController.GetBackendTopic();
+        string backendReadyTopic = mqttManager.backendReadyTopic;
 
         Debug.Log(mqttObject.topic + " " + mqttObject.ident);
         if (mqttObject.topic == backendStateTopic || mqttObject.topic == backendReadyTopic) 
         {
             if (mqttObject.topic == backendReadyTopic) // Reset count to trigger update 
             {
-                receivedText.text = "Received:";
+                receivedText.text = "Received: Ready";
                 previousStateCount = 0;
+                return;
             }
 
             receivedText.text += "\n Update State " + mqttObject.ident.ToString() + " ";
