@@ -65,6 +65,7 @@ public class SettingsController : MonoBehaviour
             return;
         }
         mqttManager = GameObject.FindGameObjectsWithTag(tagMqtt)[0].gameObject.GetComponent<MqttManager>();
+        LoadAndSetPrefs();
     }
 
     public static void HandlePlayerToggle(bool player)
@@ -117,16 +118,20 @@ public class SettingsController : MonoBehaviour
         if (settingsPanelObject != null)
         {
             settingsPanelObject.SetActive(true);
-
-            (string address, int port, string username, string password, 
-                string action, string visibility, string snow, string backend) = LoadPlayerPrefs();
-
-            AssignPlayerPrefsToTextField(address, port, username,
-                password, action, visibility, snow, backend);
-
-            mqttManager.SetMqttSettings(address, port, username,
-                password, action, visibility, snow, backend);
+            LoadAndSetPrefs();
         }
+    }
+
+    private void LoadAndSetPrefs()
+    {
+        (string address, int port, string username, string password, 
+            string action, string visibility, string snow, string backend) = LoadPlayerPrefs();
+
+        AssignPlayerPrefsToTextField(address, port, username,
+            password, action, visibility, snow, backend);
+
+        mqttManager.SetMqttSettings(address, port, username,
+            password, action, visibility, snow, backend);
     }
 
     public void SavePlayerPrefs(int playerNo, string address, int port, string username, 

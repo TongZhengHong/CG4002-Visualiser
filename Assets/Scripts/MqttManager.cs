@@ -52,11 +52,6 @@ public class MqttManager : M2MqttUnityClient
     protected override void Start()
     {
         base.Start();
-
-        (string address, int port, string username, string password, string action, 
-            string visibility, string snow, string backend) = SettingsController.LoadPlayerPrefs();
-
-        SetMqttSettings(address, port, username, password, action, visibility, snow, backend);
     }
 
     protected override void Update()
