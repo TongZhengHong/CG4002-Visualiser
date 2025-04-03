@@ -11,6 +11,8 @@ public class PlayerController: MonoBehaviour
 
     [SerializeField] private GameObject playerSnowPrefab;
 
+    [SerializeField] private GameObject kdBarObject;
+
     private OpponentController opponentPlayer;
 
     private GunController gunController;
@@ -22,6 +24,8 @@ public class PlayerController: MonoBehaviour
     private BombController bombController;
 
     private ActionController actionController;
+
+    private KillDeathSection killDeathSection;
 
     private string tagMqtt = "MQTT";
 
@@ -50,6 +54,7 @@ public class PlayerController: MonoBehaviour
         bombController = GetComponent<BombController>();
         actionController = GetComponent<ActionController>();
         gunController = gunControllerObject.GetComponent<GunController>();
+        killDeathSection = kdBarObject.GetComponent<KillDeathSection>();
 
         opponentPlayer = opponentPlayerObject.GetComponent<OpponentController>();
     }
@@ -58,6 +63,8 @@ public class PlayerController: MonoBehaviour
     {
         if (playerInfo.IsDeadAfterDamage(damage))
         {
+            killDeathSection.IncrementDeathCount();
+
             gunController.OnRespawn();
             bombController.OnRespawn();
             shieldController.OnRespawn();
@@ -103,6 +110,7 @@ public class PlayerController: MonoBehaviour
         shieldController.SyncShield(shieldCount, shieldHealth);
         gunController.SyncBullets(bullets);
         bombController.SyncBomb(bomb);
+        killDeathSection.UpdateDeathCount(deaths);
     }
 
     private void DealDamageToOpponent(int damageDealt)

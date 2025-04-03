@@ -8742,6 +8742,7 @@ GameObject:
   - component: {fileID: 851556717}
   - component: {fileID: 851556716}
   - component: {fileID: 851556715}
+  - component: {fileID: 851556718}
   m_Layer: 5
   m_Name: KDBar
   m_TagString: Untagged
@@ -8827,6 +8828,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 851556713}
   m_CullTransparentMesh: 1
+--- !u!114 &851556718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851556713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88174af9c34d44195a23c16a54cd1b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  killText: {fileID: 252393600}
+  deathText: {fileID: 479042625}
 --- !u!1 &872509811
 GameObject:
   m_ObjectHideFlags: 0
@@ -9711,6 +9726,7 @@ MonoBehaviour:
   playerObject: {fileID: 1785437985}
   opponentSnowPrefab: {fileID: 8686838836097029976, guid: 9613d4010c96b42a191f6267ea6b39de,
     type: 3}
+  kdBarObject: {fileID: 851556713}
   isInSnow: 0
 --- !u!1 &968097707
 GameObject:
@@ -16894,6 +16910,7 @@ MonoBehaviour:
   opponentPlayerObject: {fileID: 966663295}
   playerSnowPrefab: {fileID: 8686838836097029976, guid: 995d4def3e32f4e94996662423775fe1,
     type: 3}
+  kdBarObject: {fileID: 851556713}
   isInSnow: 0
   actionButtonText: {fileID: 529518730}
   hitMissText: {fileID: 2070420525}

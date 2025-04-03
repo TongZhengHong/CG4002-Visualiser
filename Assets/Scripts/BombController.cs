@@ -15,7 +15,7 @@ public class BombController: MonoBehaviour
 
     private int bombCount = 0;
 
-    private int BOMB_DAMAGE = 5;
+    private int BOMB_DAMAGE = 0;
 
     void Start()
     {
