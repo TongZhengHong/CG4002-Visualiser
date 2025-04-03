@@ -9,7 +9,6 @@ Library: /Users/zhenghong/Unity/Visualiser/Temp/BurstOutput/tempburstlibs/armeab
 --target-framework=NetFramework
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/zhenghong/Unity/Visualiser/Temp/Burst
---debug=LineOnly
 --key-folder=/Applications/Unity/Hub/Editor/6000.0.34f1/PlaybackEngines/AndroidPlayer
 --decode-folder=/Users/zhenghong/Unity/Visualiser/Library/Burst
 --output=/Users/zhenghong/Unity/Visualiser/Temp/BurstOutput/tempburstlibs/armeabi-v7a/lib_burst_generated
@@ -78,7 +77,6 @@ Library: /Users/zhenghong/Unity/Visualiser/Temp/BurstOutput/tempburstlibs/armeab
 --float-mode=Fast
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/zhenghong/Unity/Visualiser/Temp/Burst
---debug=LineOnly
 --key-folder=/Applications/Unity/Hub/Editor/6000.0.34f1/PlaybackEngines/AndroidPlayer
 --decode-folder=/Users/zhenghong/Unity/Visualiser/Library/Burst
 --output=/Users/zhenghong/Unity/Visualiser/Temp/BurstOutput/tempburstlibs/armeabi-v7a/lib_burst_generated
@@ -96,7 +94,6 @@ Library: /Users/zhenghong/Unity/Visualiser/Temp/BurstOutput/tempburstlibs/armeab
 --target-framework=NetFramework
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/zhenghong/Unity/Visualiser/Temp/Burst
---debug=LineOnly
 --key-folder=/Applications/Unity/Hub/Editor/6000.0.34f1/PlaybackEngines/AndroidPlayer
 --decode-folder=/Users/zhenghong/Unity/Visualiser/Library/Burst
 --output=/Users/zhenghong/Unity/Visualiser/Temp/BurstOutput/tempburstlibs/armeabi-v7a/lib_burst_generated
