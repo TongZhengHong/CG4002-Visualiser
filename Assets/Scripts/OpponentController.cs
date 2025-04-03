@@ -37,6 +37,8 @@ public class OpponentController: MonoBehaviour
 
     public bool isInSnow = false;
 
+    private bool isEnabled = false;
+
     void Start()
     {
         if (GameObject.FindGameObjectsWithTag(tagMqtt).Length == 0)
@@ -59,6 +61,8 @@ public class OpponentController: MonoBehaviour
 
     private void OnMessageArrivedHandler(MqttObj mqttObject)
     {
+        if (!isEnabled) return;
+
         string actionTopic = SettingsController.GetActionTopic();
         string visibilityTopic = SettingsController.GetVisibilityTopic();
 
@@ -174,6 +178,16 @@ public class OpponentController: MonoBehaviour
         Vector3 snowPos = Camera.main.transform.position;
         snowPos.y = 0;
         Instantiate(opponentSnowPrefab, snowPos, Quaternion.Euler(Vector3.up));
+    }
+
+    public void EnableOpponent()
+    {
+        isEnabled = true;
+    }
+    
+    public void DisableOpponent()
+    {
+        isEnabled = false;
     }
 
 }
