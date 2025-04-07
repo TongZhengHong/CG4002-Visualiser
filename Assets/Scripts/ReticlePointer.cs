@@ -125,16 +125,26 @@ public class ReticlePointer: MonoBehaviour
         CreateMesh();
     }
 
+    public void SeeOpponent()
+    {
+        isLookingAtOpponent = true;
+    }
+
+    public void LoseOpponent()
+    {
+        isLookingAtOpponent = false;
+    }
+
     void Update()
     {
-        RaycastHit hit;
-        LayerMask layerMask = LayerMask.GetMask("Opponent");
-        bool didHit = Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask);
+        // RaycastHit hit;
+        // LayerMask layerMask = LayerMask.GetMask("Opponent");
+        // bool didHit = Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask);
 
-        if (didHit != isLookingAtOpponent)
-        {
-            isLookingAtOpponent = didHit;
-        }
+        // if (didHit != isLookingAtOpponent)
+        // {
+        //     isLookingAtOpponent = didHit;
+        // }
 
         if (isLookingAtOpponent) ActivateReticle();
         else ResetReticle();
