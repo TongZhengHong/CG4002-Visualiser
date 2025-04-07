@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5744393040466421561}
   - component: {fileID: 6493591571029277381}
   - component: {fileID: 78095071022188792}
+  - component: {fileID: 1186149106233770179}
   m_Layer: 0
   m_Name: Shuttecock
   m_TagString: Untagged
@@ -109,6 +110,29 @@ MonoBehaviour:
   rotateZAxis: 1
   explosionPrefab: {fileID: 2533412329754875882, guid: 49b947434b7e64691a3ee9503eb28723,
     type: 3}
+--- !u!136 &1186149106233770179
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595457466838712902}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.42377135
+  m_Height: 0.7003401
+  m_Direction: 1
+  m_Center: {x: -0.35076025, y: 0.4476417, z: -0.5883658}
 --- !u!1 &1541672389626359972
 GameObject:
   m_ObjectHideFlags: 0

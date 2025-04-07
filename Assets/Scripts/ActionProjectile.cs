@@ -44,13 +44,14 @@ public class ActionProjectile: MonoBehaviour
         return Vector3.Lerp(first, second, t);
     }
 
-    public void OnLaunchProjectile()
+    public void OnLaunchProjectile(bool isOppVisible, Vector3 endPosition)
     {
         start = transform.position;
         start.y -= startingHeightOffset; // Offset below eye/camera level
         start += transform.right * 0.2f; // Start projectile right of center 
-        end = start + transform.forward * totalDistance;
-        end.y = 0;
+
+        end = isOppVisible ? endPosition : start + transform.forward * totalDistance;
+        // end.y = 0;
 
         Vector3 midPoint = (start + end) / 2;
         turningPoint = new Vector3(midPoint.x, midPoint.y + projectileHeight, midPoint.z);
@@ -86,10 +87,23 @@ public class ActionProjectile: MonoBehaviour
             yield return null;
         }
 
+        StartCoroutine(TriggerExplosion());
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Human"))
+        {
+            StartCoroutine(TriggerExplosion());
+        }
+    }
+
+    private IEnumerator TriggerExplosion()
+    {
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.Euler(Vector3.up));
         yield return new WaitForSeconds(0.4f);
         Destroy(explosion);
         Destroy(gameObject);
-    }
+    } 
 
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 767667331450757462}
   - component: {fileID: 2726984765065033033}
   - component: {fileID: 6243783776323994931}
+  - component: {fileID: 5917997060359044698}
   m_Layer: 0
   m_Name: GolfBall
   m_TagString: Untagged
@@ -107,3 +108,24 @@ MonoBehaviour:
   rotateZAxis: 0
   explosionPrefab: {fileID: 6344426033412368405, guid: 01954b3af30654bfa9364979658a0e6d,
     type: 3}
+--- !u!135 &5917997060359044698
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728859512734747242}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.012648585
+  m_Center: {x: 0, y: -9.313225e-10, z: 0.009993669}

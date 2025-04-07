@@ -27,7 +27,7 @@ public class BombController: MonoBehaviour
         }
     }
 
-    public int ThrowBomb()
+    public int ThrowBomb(bool isVisible, Vector3 endPosition)
     {
         if (bombCount == 0)
         {
@@ -37,7 +37,7 @@ public class BombController: MonoBehaviour
 
         GameObject bombInstance = Instantiate(bombPrefab, startingTransform.position, startingTransform.rotation);
         ActionProjectile bomb = bombInstance.GetComponent<ActionProjectile>();
-        bomb.OnLaunchProjectile();
+        bomb.OnLaunchProjectile(isVisible, endPosition);
 
         bombCount--;
         UpdateBombCount(bombCount);

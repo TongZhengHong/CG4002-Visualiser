@@ -19,23 +19,23 @@ public class ActionController : MonoBehaviour
     private int BOXING_DAMAGE = 10;
     private int FENCING_DAMAGE = 10;
 
-    public int TriggerGolf()
+    public int TriggerGolf(bool isVisible, Vector3 endPosition)
     {
         if (golfPrefab == null) return 0;
 
         GameObject golfInstance = Instantiate(golfPrefab, startingTransform.position, startingTransform.rotation);
         ActionProjectile golf = golfInstance.GetComponent<ActionProjectile>();
-        golf.OnLaunchProjectile();
+        golf.OnLaunchProjectile(isVisible, endPosition);
         return GOLF_DAMAGE;
     }
 
-    public int TriggerBadminton()
+    public int TriggerBadminton(bool isVisible, Vector3 endPosition)
     {
         if (shuttlecockPrefab == null) return 0;
 
         GameObject badmintonInstance = Instantiate(shuttlecockPrefab, startingTransform.position, startingTransform.rotation);
         ActionProjectile badminton = badmintonInstance.GetComponent<ActionProjectile>();
-        badminton.OnLaunchProjectile();
+        badminton.OnLaunchProjectile(isVisible, endPosition);
         return BADMINTON_DAMAGE;
     }
 

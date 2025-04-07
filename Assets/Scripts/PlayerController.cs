@@ -73,7 +73,7 @@ public class PlayerController: MonoBehaviour
 
     public void PlayAction()
     {
-        int damageDealt = ProcessAction(currentAction);
+        int damageDealt = ProcessAction(currentAction, ReticlePointer.isLookingAtOpponent, opponentPlayerObject.transform.position);
         DealDamageToOpponent(damageDealt);
     }
 
@@ -96,7 +96,8 @@ public class PlayerController: MonoBehaviour
         if (mqttObject.topic != actionTopic) return;
         if (mqttObject.ident != playerNumber) return;
 
-        int damageDealt = ProcessAction(mqttObject.payload[0]);
+        int action = mqttObject.payload[0];
+        int damageDealt = ProcessAction(action, ReticlePointer.isLookingAtOpponent, opponentPlayerObject.transform.position);
         if (opponentPlayer.isInSnow) damageDealt += 5;
         DealDamageToOpponent(damageDealt);
 
@@ -121,7 +122,7 @@ public class PlayerController: MonoBehaviour
         } 
     }
 
-    private int ProcessAction(int action)
+    private int ProcessAction(int action, bool isOpponentVisible, Vector3 oppPosition)
     {
         if (action < 0 || action > 9) return 0;
         int damageDealt = 0;
@@ -144,27 +145,27 @@ public class PlayerController: MonoBehaviour
             case 4: // LOGOUT
                 break; 
             case 5: // BOMB
-                damageDealt = bombController.ThrowBomb();
-                if (ReticlePointer.isLookingAtOpponent) {
+                damageDealt = bombController.ThrowBomb(isOpponentVisible, oppPosition);
+                if (isOpponentVisible) {
                     PlacePlayerSnow();
                 }
                 StopAllCoroutines();
-                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
+                StartCoroutine(ShowHitMissText(isOpponentVisible ? "Hit!" : "Miss..."));
                 break; 
             case 6: // BADMINTON
-                damageDealt = actionController.TriggerBadminton();
+                damageDealt = actionController.TriggerBadminton(isOpponentVisible, oppPosition);
                 StopAllCoroutines();
-                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
+                StartCoroutine(ShowHitMissText(isOpponentVisible ? "Hit!" : "Miss..."));
                 break; 
             case 7: // GOLF
-                damageDealt = actionController.TriggerGolf();
+                damageDealt = actionController.TriggerGolf(isOpponentVisible, oppPosition);
                 StopAllCoroutines();
-                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
+                StartCoroutine(ShowHitMissText(isOpponentVisible ? "Hit!" : "Miss..."));
                 break; 
             case 8: // FENCING
                 damageDealt = actionController.TriggerFencing();
                 StopAllCoroutines();
-                StartCoroutine(ShowHitMissText(ReticlePointer.isLookingAtOpponent ? "Hit!" : "Miss..."));
+                StartCoroutine(ShowHitMissText(isOpponentVisible ? "Hit!" : "Miss..."));
                 break; 
             case 9: // BOXING
                 damageDealt = actionController.TriggerBoxing();
@@ -223,7 +224,7 @@ public class PlayerController: MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "OpponentSnow" && !isInSnow)
+        if (other.CompareTag("OpponentSnow") && !isInSnow)
         {
             mqttManager.PublishSnow(SettingsController.GetSnowTopic(), SettingsController.GetPlayerNo(), true);
             TakeDamage(5);
@@ -232,7 +233,7 @@ public class PlayerController: MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.tag == "OpponentSnow" && isInSnow)
+        if (other.CompareTag("OpponentSnow") && isInSnow)
         {
             mqttManager.PublishSnow(SettingsController.GetSnowTopic(), SettingsController.GetPlayerNo(), false);
             isInSnow = false;

@@ -33,8 +33,6 @@ public class OpponentController: MonoBehaviour
 
     private int prevAction = 0;
 
-    private int prevDamage = 0;
-
     public bool isInSnow = false;
 
     private bool isEnabled = false;
@@ -70,22 +68,18 @@ public class OpponentController: MonoBehaviour
 
         if (mqttObject.topic == actionTopic)
         {
-            prevDamage = ProcessAction(mqttObject.payload[0]);
             prevAction = mqttObject.payload[0];
         }
         else if (mqttObject.topic == visibilityTopic)
         {
-            if (mqttObject.payload[0] == 1) // Opponent saw player 
-            {
-                if (opponentPlayer.isInSnow) prevDamage += 5;
+            bool isPlayerVisible = mqttObject.payload[0] == 1; // Opponent saw player
 
-                opponentPlayer.TakeDamage(prevDamage);
-                if (prevAction == 5) { // Check if BOMB action
-                    PlaceOpponentSnow();
-                }
+            int damageDealt = ProcessAction(prevAction, isPlayerVisible, playerObject.transform.position);
+            if (opponentPlayer.isInSnow) damageDealt += 5;
+
+            if (isPlayerVisible) {
+                opponentPlayer.TakeDamage(damageDealt);
             } 
-            
-            prevDamage = 0;
             prevAction = 0;
         }
     }
@@ -110,7 +104,7 @@ public class OpponentController: MonoBehaviour
         }
     }
 
-    private int ProcessAction(int action)
+    private int ProcessAction(int action, bool isPlayerVisible, Vector3 playerPos)
     {
         if (action < 0 || action > 9) return 0;
         int damageDealt = 0;
@@ -131,13 +125,16 @@ public class OpponentController: MonoBehaviour
             case 4: // LOGOUT
                 break; 
             case 5: // BOMB
-                damageDealt = bombController.ThrowBomb();
+                damageDealt = bombController.ThrowBomb(isPlayerVisible, playerPos);
+                if (isPlayerVisible) {
+                    PlaceOpponentSnow();
+                }
                 break; 
             case 6: // BADMINTON
-                damageDealt = actionController.TriggerBadminton();
+                damageDealt = actionController.TriggerBadminton(isPlayerVisible, playerPos);
                 break; 
             case 7: // GOLF
-                damageDealt = actionController.TriggerGolf();
+                damageDealt = actionController.TriggerGolf(isPlayerVisible, playerPos);
                 break; 
             case 8: // FENCING
                 damageDealt = actionController.TriggerFencing();
@@ -159,15 +156,16 @@ public class OpponentController: MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "PlayerSnow" && !isInSnow)
+        if (other.CompareTag("PlayerSnow") && !isInSnow)
         {
             TakeDamage(5);
             isInSnow = true;
         }
     }
+
     void OnTriggerExit(Collider other)
     {
-        if (other.tag == "PlayerSnow")
+        if (other.CompareTag("PlayerSnow"))
         {
             isInSnow = false;
         }
