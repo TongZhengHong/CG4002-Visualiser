@@ -60,6 +60,13 @@ public class MqttController : MonoBehaviour
             {
                 receivedText.text = "Received: Ready";
                 previousStateCount = 0;
+
+                GameObject[] playerSnowList = GameObject.FindGameObjectsWithTag("PlayerSnow");
+                GameObject[] opponentSnowList = GameObject.FindGameObjectsWithTag("OpponentSnow");
+
+                foreach (GameObject playerSnow in playerSnowList) Destroy(playerSnow);
+                foreach (GameObject opponentSnow in opponentSnowList) Destroy(opponentSnow);
+
                 return;
             }
 
