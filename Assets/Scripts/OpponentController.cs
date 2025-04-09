@@ -33,7 +33,7 @@ public class OpponentController: MonoBehaviour
 
     private int prevAction = 0;
 
-    public bool isInSnow = false;
+    private int snowStacks = 0;
 
     private bool isEnabled = false;
 
@@ -75,7 +75,7 @@ public class OpponentController: MonoBehaviour
             bool isPlayerVisible = mqttObject.payload[0] == 1; // Opponent saw player
 
             int damageDealt = ProcessAction(prevAction, isPlayerVisible, playerObject.transform.position);
-            if (opponentPlayer.isInSnow) damageDealt += 5;
+            damageDealt += opponentPlayer.GetSnowDamage();
 
             if (isPlayerVisible) {
                 opponentPlayer.TakeDamage(damageDealt);
@@ -156,10 +156,10 @@ public class OpponentController: MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("PlayerSnow") && !isInSnow)
+        if (other.CompareTag("PlayerSnow"))
         {
             TakeDamage(5);
-            isInSnow = true;
+            snowStacks += 1;
         }
     }
 
@@ -167,8 +167,13 @@ public class OpponentController: MonoBehaviour
     {
         if (other.CompareTag("PlayerSnow"))
         {
-            isInSnow = false;
+            snowStacks -= 1;
         }
+    }
+
+    public int GetSnowDamage()
+    {
+        return snowStacks * 5;
     }
 
     private void PlaceOpponentSnow()

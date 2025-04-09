@@ -33,7 +33,7 @@ public class PlayerController: MonoBehaviour
 
     private int currentAction = 1;
 
-    public bool isInSnow = false;
+    private int snowStacks = 0;
 
     [SerializeField] private TMP_Text actionButtonText;
 
@@ -98,7 +98,7 @@ public class PlayerController: MonoBehaviour
 
         int action = mqttObject.payload[0];
         int damageDealt = ProcessAction(action, ReticlePointer.isLookingAtOpponent, opponentPlayerObject.transform.position);
-        if (opponentPlayer.isInSnow) damageDealt += 5;
+        damageDealt += opponentPlayer.GetSnowDamage();
         DealDamageToOpponent(damageDealt);
 
         string visibilityTopic = SettingsController.GetVisibilityTopic();
@@ -224,20 +224,25 @@ public class PlayerController: MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("OpponentSnow") && !isInSnow)
+        if (other.CompareTag("OpponentSnow"))
         {
             mqttManager.PublishSnow(SettingsController.GetSnowTopic(), SettingsController.GetPlayerNo(), true);
             TakeDamage(5);
-            isInSnow = true;
+            snowStacks += 1;
         }
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("OpponentSnow") && isInSnow)
+        if (other.CompareTag("OpponentSnow"))
         {
             mqttManager.PublishSnow(SettingsController.GetSnowTopic(), SettingsController.GetPlayerNo(), false);
-            isInSnow = false;
+            snowStacks -= 1;
         }
+    }
+
+    public int GetSnowDamage() 
+    {
+        return snowStacks * 5;
     }
 
 }
