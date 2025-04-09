@@ -1,0 +1,51 @@
+@startuml PlayerSequenceDiagram
+actor Broker
+participant "MqttManager" as MM
+participant "Player" as P
+participant "Opponent" as O
+participant "ReticlePointer" as RP
+
+== Action Trigger Processing ==
+Broker -> MM : MQTT message (viz/trigger)
+MM -> P : OnMessageArrived(mqttObject)
+activate P
+
+P -> RP : isLookingAtOpponent
+activate RP
+RP --> P: opponent visibility: bool
+deactivate RP
+
+P -> P : ProcessAction(action, oppVis, oppPos)
+activate P 
+return damage: int
+
+alt Opponent is in Snow
+  P -> P : Add bonus damage
+end
+P -> O : DealDamage(damage)
+P -> MM : PublishPlayerViz(topic, playerNo)
+
+deactivate P
+MM -> Broker : Publish(topic, message)
+
+== Snow Zone Collision ==
+note over P : OnTriggerEnter(Collider)
+alt tag == OpponentSnow
+  P -> P : TakeDamage(5)
+  activate P
+  P -> P : snowStacks++
+  P -> MM : PublishSnow(topic, playerNo, true)
+  deactivate P
+  MM -> Broker : Publish(topic, message)
+end
+
+note over P : OnTriggerExit(Collider)
+alt tag == OpponentSnow
+  P -> P : snowStacks--
+  activate P
+  P -> MM : PublishSnow(topic, playerNo, false)
+  deactivate P
+  MM -> Broker : Publish(topic, message)
+end
+
+@enduml

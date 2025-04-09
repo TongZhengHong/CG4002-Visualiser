@@ -1,0 +1,164 @@
+@startuml VisualiserClassDiagram
+skinparam classAttributeIconSize 0
+
+class MqttManager {
+    +OnMessageArrived: event
+    +isConnected: bool
+    +topicSubscribeList: List<string>
+    +ToggleConnection()
+    +Publish(topic: string, message: byte[])
+    +SetMqttSettings(...)
+}
+
+package "Player Logic" <<Rectangle>> {
+    class PlayerController #ADD8E6 {
+        -opponent: OpponentController
+        -playerSnowPrefab: GameObject
+
+        -OnMessageArrivedHandler(msg: MqttObj)
+        +ProcessAction(action: int)
+        +TakeDamage(amount: int)
+        +PublishPlayerViz(playerNo: int)
+        +PlacePlayerSnow()
+        +SyncPlayerInfo()
+    }
+
+    class OpponentController #ADD8E6 {
+        -player: PlayerController
+        -opponentSnowPrefab: GameObject
+
+        -OnMessageArrivedHandler(msg: MqttObj)
+        +ProcessAction(action: int)
+        +TakeDamage(amount: int)
+        +PlaceOpponentSnow()
+        +SyncOpponentInfo()
+    }
+}
+
+package "Action Controllers" <<Rectangle>> {
+    class PlayerInfo #C1E1C1 {
+        -maxShield: int
+        -maxHealth: int
+        -currentHealth: int
+        -currentShield: int
+        -healthSlider: Slider
+        -shieldSlider: Slider
+        -healthText: TMP_Text
+        -shieldText: TMP_Text
+        -playerNumberText:TMP_Text
+        +ActivateShield()
+        +IsDeadAfterDamage(damage: int)
+        +SyncHealthAndShield()
+        -SetHealthSlider()
+        -SetShieldSlider()
+    }
+
+    class GunController #C1E1C1 {
+        -muzzleFlash: ParticleSystem
+        -mazagineObject: GameObject
+        -gunAnimator: Animator
+        -bulletCount: int
+        -isReloading: bool
+        +ShootGun()
+        +ReloadBullets()
+        +OnRespawn()
+        +SyncBullets()
+    }
+
+    class ShieldController #C1E1C1 {
+        -shieldObject: GameObject
+        -shieldCountObject: GameObject
+        -maxShield: int
+        -shieldCount: int
+        +ActivateShield()
+        +OnShieldDestroy()
+        +OnRespawn()
+        +SyncShield()
+    }
+
+    class BombController #C1E1C1 {
+        -bombPrefab: GameObject
+        -bombCountObject: GameObject
+        -maxBomb: int
+        -bombCount: int
+        -startingPosition: Transform
+        +ThrowBomb()
+        +OnRespawn()
+        +SyncBomb()
+    }
+
+    class ActionController #C1E1C1 {
+        -shuttlecockPrefab: GameObject
+        -golfPrefab: GameObject
+        -boxingObject: GameObject
+        -fencingObject: GameObject
+        -startingPosition: Transform
+        +TriggerBoxing()
+        +TriggerFencing()
+        +TriggerBadminton()
+        +TriggerGolf()
+    }
+}
+
+package "UI controllers" <<Rectangle>> {
+    class MazagineController #F8C8DC {
+        -bulletCount: int
+        -bulletCountText: TMP_Text
+        -bulletList: GameObject[]
+        +ShootBullet()
+        +ReloadBullets()
+        +SyncBullets()
+        +OnRespawn()
+    }
+
+    class ShieldBombSection #F8C8DC {
+        -shieldCountText: TMP_Text
+        -bombCountText: TMP_Text
+        +UpdateShieldCount()
+        +UpdateBombCount()
+    }
+}
+
+class SettingsController {
+    {static} PlayerNo: int
+    -brokerAddress: string
+    -brokerPort: int
+    -username: string
+    -password: string
+    -actionTopic: string
+    -visibilityTopic: string
+    -snowTopic: string
+    -backendTopic: string
+
+    +HandleSave()
+    +LoadAndSetPrefs()
+    +LoadPlayerPrefs()
+}
+
+MqttManager <-- PlayerController : subscribes to
+MqttManager <-- OpponentController : subscribes to
+
+PlayerController --> PlayerInfo
+PlayerController --> GunController
+PlayerController --> ShieldController
+PlayerController --> BombController
+PlayerController --> ActionController
+
+OpponentController --> PlayerInfo
+OpponentController --> GunController
+OpponentController --> ShieldController
+OpponentController --> BombController
+OpponentController --> ActionController
+
+PlayerController -up-> SettingsController
+OpponentController -up-> SettingsController
+
+BombController -down-> ShieldBombSection
+ShieldController -down-> ShieldBombSection
+GunController -down-> MazagineController
+SettingsController -left-> MqttManager : sets settings
+
+PlayerController -right-> OpponentController : references
+OpponentController -left-> PlayerController : references
+
+@enduml

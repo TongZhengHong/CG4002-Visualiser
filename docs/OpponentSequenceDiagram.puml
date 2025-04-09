@@ -1,0 +1,39 @@
+@startuml OpponentSequenceDiagram
+
+actor Broker
+participant "MqttManager" as MM
+participant "Opponent" as O
+participant "Player" as P
+
+== MQTT Message Received ==
+Broker -> MM : MQTT message (viz/trigger)
+
+MM -> O : OnMessageArrivedHandler(mqttObject)
+activate O
+alt isEnabled == false
+    return
+end
+
+alt topic == actionTopic
+    O -> O : Store previous action 
+    activate O
+else topic == visibilityTopic
+    O -> O : isPlayerVisible = payload[0] == 1
+
+    O -> O : ProcessAction(prevAction, isPlayerVisible, playerPos)
+    O -> P : GetSnowDamage()
+    activate P
+    P --> O : snowDamage: int
+    deactivate P
+    O -> O : Add snow damage to total
+
+    alt isPlayerVisible
+        O -> P : TakeDamage(damage)
+        activate P 
+        return
+        deactivate P
+    end
+
+    O -> O : Reset previous action
+end
+@enduml
