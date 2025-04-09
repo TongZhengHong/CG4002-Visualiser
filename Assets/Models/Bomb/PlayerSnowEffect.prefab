@@ -1106,7 +1106,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 75
+      scalar: 20
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5109,6 +5109,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3280519133223516628, guid: a71be3e7990efb040a07565c43cbb198,
         type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3280519133223516628, guid: a71be3e7990efb040a07565c43cbb198,
+        type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
       value: 0.8018868
       objectReference: {fileID: 0}
@@ -5126,6 +5131,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3280519133390621004, guid: a71be3e7990efb040a07565c43cbb198,
+        type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3280519133390621004, guid: a71be3e7990efb040a07565c43cbb198,
         type: 3}
@@ -5225,7 +5235,7 @@ PrefabInstance:
     - target: {fileID: 3280519133430969737, guid: a71be3e7990efb040a07565c43cbb198,
         type: 3}
       propertyPath: m_Intensity
-      value: 0
+      value: 2.6047242
       objectReference: {fileID: 0}
     - target: {fileID: 6679182840704168355, guid: a71be3e7990efb040a07565c43cbb198,
         type: 3}
