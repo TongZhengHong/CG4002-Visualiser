@@ -8,9 +8,7 @@ The app receives real-time game data via an **MQTT** broker hosted on a physical
 
 To enable stereoscopic rendering, the app uses the **Google Cardboard XR plugin**, allowing players to mount their mobile devices in a headset for a fully immersive, hands-free experience.
 
-![Home Demo](docs/CG4002_home_demo.mov)
-
-<video src='docs/CG4002_home_demo.mov' width=180></video>
+[![CG4002 Home Demo](https://img.youtube.com/vi/T65Q4xxs96o/hqdefault.jpg)](https://youtu.be/T65Q4xxs96o)
 
 ## ✨ Features
 1. Player Actions
