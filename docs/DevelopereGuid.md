@@ -4,6 +4,23 @@
 
 This guide outlines the architecture and logic of the AR Laser Tag Visualiser Unity app. The visualiser displays player actions, effects, and status in AR using real-time data from a wearable system via MQTT. It’s designed to help developers understand the system flow and contribute effectively.
 
+## Basic Game Mechanics
+
+### 📸 Image Targets
+Each player wears a printed image target on their body, which is tracked by the opponent’s AR device to render virtual effects at the correct physical location. The image was selected for high contrast and distinct edges, improving recognition accuracy and tracking stability under various lighting and distance conditions. Together with the Vuforia engine, we are able to detect the image target from a distance of **2-3 metres**. 
+
+<p align="center">
+    <img src="images/target_image.png" width="300">
+</p>
+
+### 📐 Floor Reference
+By default, Vuforia's coordinate system is initialized relative to the phone’s starting camera position. This means if the app is launched while the player is standing, the virtual ground plane appears at eye level. 
+
+To resolve this, we introduced a dedicated floor image target placed in the real world and set **Vuforia’s World Center Mode** to `SPECIFIC_TARGET`. This ensures that Unity’s world origin aligns with the physical floor, allowing for accurate placement of the snow bomb effects. The imaged for floor reference is a QR code which can be found [here](images/floor_qr.jpg).
+
+### 🎯 Reticle Pointer
+The reticle pointer was adapted from the Google Cardboard plugin and serves as a visual indicator of **whether the opponent is currently in sight**. It is centered in the AR camera view and dynamically adjusts based on visibility: it expands into a donut when the opponent is detected and shrinks to a dot when not. This provides feedback to players and ensures that actions like shooting or launching projectiles are only effective when aimed properly.
+
 ## 🧠 Logic Architecture
 
 The logic in the **AR Laser Tag Visualiser** is centered around 2 primary entities: the **Player** and the **Opponent**, both of which interact with each other and respond to incoming MQTT messages.
@@ -50,7 +67,7 @@ Each player must tap a `Connect` button in the UI to initiate the MQTT connectio
 #### 🎯 Action Dispatch
 When a message is received on the `viz/trigger` topic:
 
-1. `MqttManager` determines the `PLAYER_NO`.
+1. `MqttManager` checks the `PLAYER_NO`.
 2. Sends the corresponding `ACTION_NO` to the `Player` or `Opponent`.
 
 This ensures each player sees the actions performed by their opponent, in real-time.
@@ -98,13 +115,17 @@ Across the different scripts, we have the follow class diagram to show their rel
 ### 🧩 Sequence Diagram Explanation – Player
 
 The sequence diagram illustrates how the Player processes actions in response to MQTT messages. 
-1. When an action trigger is received from the broker, the MqttManager verifies the topic and player number before forwarding it to the Player. 
-2. The Player then calls ProcessAction, which delegates the request to the appropriate controller (e.g., gun, shield, bomb). 
+1. When an action trigger is received from the broker, the `MqttManager` verifies the topic and player number before forwarding it to the `Player` object. 
+2. The `Player` then calls `ProcessAction`, which delegates the request to the appropriate controller (e.g., gun, shield, bomb). 
 3. Each controller checks if the action is valid (e.g., enough ammo, shield not active) before executing it and calculating damage.
 4. The player publishes their visibility status after an action.
 
-- When the player enters a snow zone (OpponentSnow), they take 5 damage, increment their snow stack counter, and publish a message to notify the broker.
-- Upon exiting the zone, the snow stack is decremented, and another message is sent to update the player's snow status.
+When the player enters a snow zone (OpponentSnow)
+1. OnTriggerEnter will be called
+2. Player take 5 damage and increment their snow stack counter 
+3. Publish a message to notify the broker about snow status
+
+Upon exiting the zone, the snow stack is decremented, and another message is sent to update the player's snow status.
 
 ![](images/PlayerSequenceDiagram.png)
 
@@ -152,21 +173,20 @@ If the action is valid and `isLookingAtOpponent` is true, the action is performe
 The function returns the amount of damage dealt to the opponent. 
 
 ### 🔄 Backend State Synchronization
-The state synchronization logic is triggered when the player receives an MQTT message on the backend/state topic. The message contains the latest values for the player's and opponent's state, and the `SyncPlayerInfo()` and `SyncOpponentInfo()` function  are responsible for updating the in-game UI and logic accordingly.
+The state synchronization logic is triggered when the player receives an MQTT message on the `backend/state` topic. The message contains the latest values for the player's and opponent's state, and the `SyncPlayerInfo()` and `SyncOpponentInfo()` functions  are responsible for updating the in-game UI and logic accordingly.
 
 ```csharp
 public void SyncPlayerInfo(int health, int bullets, int bomb, int shieldHealth, int deaths, int shieldCount)
 ```
 
-#### 🎯 Breakdown:
-- Health and Shield health: 
-Updated via `PlayerInfo.SyncHealthAndShield(health, shieldHealth)`.
-- Shield Inventory: 
-Passed to `ShieldController.SyncShield(shieldCount, shieldHealth)` to update both shield health and remaining uses.
-- Bullets: Sent to `GunController.SyncBullets(bullets)` to reflect ammo count.
-- Bomb Count: 
-Updated via `BombController.SyncBomb(bomb)`.
-- Death Counter: 
-Refreshed through `KillDeathSection.UpdateDeathCount(deaths)`.
+#### Function Call Breakdown:
 
-This function ensures that all player stats are instantly synchronized with backend data, if a wrong action is played. 
+| Information | Function |
+| ----------- | -------- |
+|Health and Shield health |`PlayerInfo.SyncHealthAndShield(health, shieldHealth)`|
+| Shield Inventory |  `ShieldController.SyncShield(shieldCount, shieldHealth)` |
+| Bullets | `GunController.SyncBullets(bullets)` |
+| Bomb Count | `BombController.SyncBomb(bomb)` |
+| Death Counter | `KillDeathSection.UpdateDeathCount(deaths)` |
+
+This function ensures that all player stats are instantly synchronized with backend data, especially necessary when a wrong action is detected and sent to the visualiser application. 

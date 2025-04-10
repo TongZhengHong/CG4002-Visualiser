@@ -8,6 +8,8 @@ The app receives real-time game data via an **MQTT** broker hosted on a physical
 
 To enable stereoscopic rendering, the app uses the **Google Cardboard XR plugin**, allowing players to mount their mobile devices in a headset for a fully immersive, hands-free experience.
 
+![Home Demo](docs/CG4002_home_demo.mov)
+
 ## ✨ Features
 1. Player Actions
     - Gun shot
@@ -20,7 +22,7 @@ To enable stereoscopic rendering, the app uses the **Google Cardboard XR plugin*
     - Shield barrier effect on players
 
 3. AR Capabilities
-    - Opponent tracking using image targets
+    - Opponent tracking using image targets (Players are to wear a vest with the image target attached)
     - Floor reference image used to anchor Unity’s world origin to a physical location in the real world
 
 ## 🧰 Tech Stack
