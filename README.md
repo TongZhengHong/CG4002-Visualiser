@@ -10,7 +10,7 @@ To enable stereoscopic rendering, the app uses the **Google Cardboard XR plugin*
 
 ![Home Demo](docs/CG4002_home_demo.mov)
 
-<video src='docs/CG4002_home_demo.mov' width=180/>
+<video src='docs/CG4002_home_demo.mov' width=180></video>
 
 ## ✨ Features
 1. Player Actions
