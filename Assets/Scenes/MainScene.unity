@@ -6779,7 +6779,19 @@ MonoBehaviour:
     m_RotationOrder: 4
   OnTargetFound:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 969246187}
+        m_TargetAssemblyTypeName: FloorVisibility, Assembly-CSharp
+        m_MethodName: OnFloorTargetVisible
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnTargetLost:
     m_PersistentCalls:
       m_Calls: []
@@ -9775,7 +9787,6 @@ MonoBehaviour:
   opponentSnowPrefab: {fileID: 8686838836097029976, guid: 9613d4010c96b42a191f6267ea6b39de,
     type: 3}
   kdBarObject: {fileID: 851556713}
-  isInSnow: 0
 --- !u!1 &968097707
 GameObject:
   m_ObjectHideFlags: 0
@@ -16960,7 +16971,6 @@ MonoBehaviour:
   playerSnowPrefab: {fileID: 8686838836097029976, guid: 995d4def3e32f4e94996662423775fe1,
     type: 3}
   kdBarObject: {fileID: 851556713}
-  isInSnow: 0
   actionButtonText: {fileID: 529518730}
   hitMissText: {fileID: 2070420525}
 --- !u!4 &1785437991
@@ -19745,7 +19755,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4281677109
-  m_fontColor: {r: 0.65882355, g: 0.65882355, b: 0.65882355, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

@@ -29,7 +29,12 @@ public class FloorVisibility: MonoBehaviour
     private void ToggleVisibility()
     {
         showFloor = !showFloor;
+        meshRenderer.enabled = showFloor;
         iconImage.sprite = showFloor ? visibilityOffIcon : visibilityOnIcon;
+    }
+
+    public void OnFloorTargetVisible()
+    {
         meshRenderer.enabled = showFloor;
     }
 
