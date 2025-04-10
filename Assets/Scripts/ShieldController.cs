@@ -97,13 +97,13 @@ public class ShieldController : MonoBehaviour
         if (!playerShield.activeSelf && shieldHealth > 0)
         {
             playerShield.SetActive(true);
-            if (shieldAnimator != null) {
+            if (shieldAnimator != null && playerShield.transform.localScale == Vector3.zero) {
                 shieldAnimator.SetTrigger("OpenShield");
             }
         }
         else if (playerShield.activeSelf && shieldHealth == 0)
         {
-            if (shieldAnimator != null)
+            if (shieldAnimator != null && playerShield.transform.localScale != Vector3.zero)
                 StartCoroutine(CloseShield());
             else
                 playerShield.SetActive(false);
