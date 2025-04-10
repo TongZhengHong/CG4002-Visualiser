@@ -27,6 +27,10 @@ public class GunController : MonoBehaviour
 
     private bool _isGunMoving;
 
+    private const string IS_MOVING_TRIG = "isMoving";
+    private const string IS_RELOADING_TRIG = "isReloading";
+    private const string SHOOT_TRIG = "Shoot";
+
     public bool isGunMoving {
         get { return _isGunMoving; }
         private set
@@ -34,7 +38,7 @@ public class GunController : MonoBehaviour
             if (_isGunMoving != value)
             {
                 _isGunMoving = value;
-                gunAnimator.SetBool("isMoving", _isGunMoving);
+                gunAnimator.SetBool(IS_MOVING_TRIG, _isGunMoving);
             }
         }
     }
@@ -64,11 +68,6 @@ public class GunController : MonoBehaviour
         lastGunPosition = transform.position;
     }
 
-    public void UpdateMoveAnimation(bool isMoving)
-    {
-        gunAnimator.SetBool("isMoving", isMoving);
-    }
-
     public int ShootGun()
     {
         if (!CanShoot()) return 0;
@@ -84,7 +83,8 @@ public class GunController : MonoBehaviour
             timeSinceLastShot = 0f;
 
             muzzleFlash.Play();
-            gunAnimator.SetTrigger("Shoot");
+            gunAnimator.SetBool(IS_MOVING_TRIG, false);
+            gunAnimator.SetTrigger(SHOOT_TRIG);
             return BULLET_DAMAGE;
         } 
 
@@ -109,11 +109,12 @@ public class GunController : MonoBehaviour
     {
         isReloading = true;
         bulletCount = MAX_BULLETS;
-        gunAnimator.SetBool("isReloading", true);
+        gunAnimator.SetBool(IS_MOVING_TRIG, false);
+        gunAnimator.SetBool(IS_RELOADING_TRIG, true);
 
         yield return new WaitForSeconds(RELOAD_TIME);
 
-        gunAnimator.SetBool("isReloading", false);
+        gunAnimator.SetBool(IS_RELOADING_TRIG, false);
         isReloading = false;
     }
 
@@ -121,8 +122,8 @@ public class GunController : MonoBehaviour
     {
         StopAllCoroutines();
         bulletCount = MAX_BULLETS;
-        gunAnimator.SetBool("isMoving", false);
-        gunAnimator.SetBool("isReloading", false);
+        gunAnimator.SetBool(IS_MOVING_TRIG, false);
+        gunAnimator.SetBool(IS_RELOADING_TRIG, false);
 
         if (mazagineController != null)
         {
