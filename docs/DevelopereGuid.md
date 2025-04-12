@@ -19,7 +19,11 @@ By default, Vuforia's coordinate system is initialized relative to the phone’s
 To resolve this, we introduced a dedicated floor image target placed in the real world and set **Vuforia’s World Center Mode** to `SPECIFIC_TARGET`. This ensures that Unity’s world origin aligns with the physical floor, allowing for accurate placement of the snow bomb effects. The imaged for floor reference is a QR code which can be found [here](images/floor_qr.jpg).
 
 ### 🎯 Reticle Pointer
-The reticle pointer was adapted from the Google Cardboard plugin and serves as a visual indicator of **whether the opponent is currently in sight**. It is centered in the AR camera view and dynamically adjusts based on visibility: it expands into a donut when the opponent is detected and shrinks to a dot when not. This provides feedback to players and ensures that actions like shooting or launching projectiles are only effective when aimed properly.
+The reticle pointer was adapted from the Google Cardboard plugin and serves as a visual indicator of **whether the opponent is currently in sight**. 
+
+It is centered in the AR camera view and dynamically adjusts based on visibility: it expands into a donut when the opponent is detected and shrinks to a dot when not. This provides feedback to players and ensures that actions like shooting or launching projectiles are only effective when aimed properly.
+
+Apart from providing a visual feedback, this class also provides a **static boolean** variable called `isLookingAtOpponent` which tells if the opponent is in sight.
 
 ## 🧠 Logic Architecture
 
@@ -112,16 +116,22 @@ Across the different scripts, we have the follow class diagram to show their rel
 
 ![](images/VisualiserClassDiagram.png)
 
+The class diagram reflects the application's **distributed game state** framework, where player-specific stats and logic are encapsulated within their respective controller classes rather than being stored in a centralized global state. Components such as `GunController`, `ShieldController`, `BombController`, and `ActionController` manage their own state (e.g., ammo count, shield availability). 
+
+While this distributed approach introduces some additional overhead, we can easily customize player behaviors, support unique loadouts, and extend the game to more players without tightly coupling all logic to a single class. 
+
+
 ### 🧩 Sequence Diagram Explanation – Player
 
 The sequence diagram illustrates how the Player processes actions in response to MQTT messages. 
 1. When an action trigger is received from the broker, the `MqttManager` verifies the topic and player number before forwarding it to the `Player` object. 
 2. The `Player` then calls `ProcessAction`, which delegates the request to the appropriate controller (e.g., gun, shield, bomb). 
-3. Each controller checks if the action is valid (e.g., enough ammo, shield not active) before executing it and calculating damage.
-4. The player publishes their visibility status after an action.
+3. Each controller checks if the action is valid (e.g., enough ammo, shield not active) before executing it.
+4. Damage is calculated but only applied if the player has the opponent in sight and this is obtained from the [`ReticlePointer`](#reticle-pointer) class via the static `isLookingAtOpponent` variable.
+5. The player publishes their visibility status after an action.
 
 When the player enters a snow zone (OpponentSnow)
-1. OnTriggerEnter will be called
+1. `OnTriggerEnter` will be called (by Unity collider object)
 2. Player take 5 damage and increment their snow stack counter 
 3. Publish a message to notify the broker about snow status
 
@@ -131,16 +141,19 @@ Upon exiting the zone, the snow stack is decremented, and another message is sen
 
 ### 🧩 Sequence Diagram Explanation – Opponent
 
-This diagram shows how the Opponent processes MQTT messages received from the broker via the MqttManager.
+Since a player only publishes the visibility status of their opponent after receiving the opponent's action, the opponent must be designed to listen for both the action message from the backend server and the visibility message published by the opposing player.
+
+With this in mind, the opponent processes its action in the following steps:
 
 1. When a `viz/trigger` message is received, the opponent stores the action to be displayed later.
 2. Upon receiving a `viz/visibility` message, the opponent checks if the player is visible, 
-3. Process the previously stored action, adds any snow damage, and applies the total damage to the player if visible.
-4. After applying the action, the stored action is reset to avoid repeat execution.
+3. Process and display the previously stored action
+4. Calculates any snow damage, and applies the total damage to the player only if visible.
+5. After applying the action, the stored action is reset to avoid repeat execution.
+
+> Note: Snow state is only sent via the Player object as each device can determine if the camera has entered the opponent's snow effect.
 
 ![](images/OpponentSequenceDiagram.png)
-
-> Note that snow state is only sent via the Player object as each device can determine if the camera has entered the opponent's snow effect.
 
 ### ⚙️ `ProcessAction` Function Overview
 
@@ -173,6 +186,9 @@ If the action is valid and `isLookingAtOpponent` is true, the action is performe
 The function returns the amount of damage dealt to the opponent. 
 
 ### 🔄 Backend State Synchronization
+
+While each player currently maintains their own local copy of the game state through various controller classes, discrepancies may arise due to misclassified actions or network issues. To address this, a periodic state packet is sent from the backend, serving as the source of truth for the visualizer. Upon receiving this packet, the application refreshes its local state across all relevant controllers (e.g., health, bullets, shields, bomb count, death count), ensuring that any inconsistencies are corrected and the gameplay experience remains synchronized and accurate.
+
 The state synchronization logic is triggered when the player receives an MQTT message on the `backend/state` topic. The message contains the latest values for the player's and opponent's state, and the `SyncPlayerInfo()` and `SyncOpponentInfo()` functions  are responsible for updating the in-game UI and logic accordingly.
 
 ```csharp
@@ -189,4 +205,3 @@ public void SyncPlayerInfo(int health, int bullets, int bomb, int shieldHealth, 
 | Bomb Count | `BombController.SyncBomb(bomb)` |
 | Death Counter | `KillDeathSection.UpdateDeathCount(deaths)` |
 
-This function ensures that all player stats are instantly synchronized with backend data, especially necessary when a wrong action is detected and sent to the visualiser application. 
