@@ -74,6 +74,7 @@ public class PlayerController: MonoBehaviour
     public void PlayAction()
     {
         int damageDealt = ProcessAction(currentAction, ReticlePointer.isLookingAtOpponent, opponentPlayerObject.transform.position);
+        damageDealt += opponentPlayer.GetSnowDamage();
         DealDamageToOpponent(damageDealt);
     }
 
