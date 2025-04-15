@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4425039867101934042}
   - component: {fileID: 839871178225127297}
   - component: {fileID: 2998688982008528633}
-  - component: {fileID: 8200483191432196319}
+  - component: {fileID: 844843902575539802}
   m_Layer: 0
   m_Name: SnowBoundary
   m_TagString: PlayerSnow
@@ -103,7 +103,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -111,7 +111,7 @@ CapsuleCollider:
   m_Height: 4
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &8200483191432196319
+--- !u!54 &844843902575539802
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5235,7 +5235,7 @@ PrefabInstance:
     - target: {fileID: 3280519133430969737, guid: a71be3e7990efb040a07565c43cbb198,
         type: 3}
       propertyPath: m_Intensity
-      value: 2.6047242
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6679182840704168355, guid: a71be3e7990efb040a07565c43cbb198,
         type: 3}
