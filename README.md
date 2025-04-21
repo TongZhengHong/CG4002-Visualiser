@@ -25,6 +25,34 @@ To enable stereoscopic rendering, the app uses the **Google Cardboard XR plugin*
     - Opponent tracking using image targets (Players are to wear a vest with the image target attached)
     - Floor reference image used to anchor Unity’s world origin to a physical location in the real world
 
+## 📲 Installation and Setup
+
+### 📱 Android
+
+The latest Android `.apk` build can be downloaded from the Releases section of this repository.
+
+> ⚠️ Make sure to allow installations from unknown sources on your Android device.
+
+### 🍎 iOS
+The iOS version is not available on the App Store due to Apple’s distribution restrictions. If you would like to test the iOS build, please contact me directly to arrange a TestFlight invite or access to a development build.
+
+### Setup 
+
+Set the floor reference before starting a game session. Place the QR code image on the floor and point your camera towards it. The floor reference image can be found [here](images/floor_qr.jpg).
+
+> You should see a gray plane object spawn on top of the qr code. Hide the plane object by toggling the button on the left of the settings button. 
+
+Ensure that the MQTT fields are set correctly to connect to the broker by clicking on the cog icon on the bottom left corner. The topics should be set correctly by default unless there are any changes to the backend code.
+Click `Connect` once the settings are set accordingly. 
+
+Within the settings panel (after clicking the cog icon), you can also select the player number for the device (either 1 or 2). 
+
+![Settings Panel](./docs/images/settings.jpg)
+
+If VR goggles are used for gameplay, click on the `Stereo View` button to enable stereoscopic rendering and place the device in the goggles. You should see the following:
+
+![Stereo View](./docs/images/stereo.jpg)
+
 ## 🧰 Tech Stack
 - Unity – Game engine for 3D rendering and real-time interaction.
 
@@ -65,17 +93,6 @@ When a snow bomb projectile hits an opponent, it creates a snowfall area with a 
 - Additionally, any action performed by the opposing player while their target is inside a snow zone inflicts bonus damage.
 
 This mechanic encourages spatial control, strategic movement, and the tactical use of terrain and visibility to gain an advantage.
-
-## 📲 Installation
-
-### 📱 Android
-
-The latest Android `.apk` build can be downloaded from the Releases section of this repository.
-
-> ⚠️ Make sure to allow installations from unknown sources on your Android device.
-
-### 🍎 iOS
-The iOS version is not available on the App Store due to Apple’s distribution restrictions. If you would like to test the iOS build, please contact me directly to arrange a TestFlight invite or access to a development build.
 
 ## More Information
 

@@ -16,7 +16,7 @@ Each player wears a printed image target on their body, which is tracked by the 
 ### 📐 Floor Reference
 By default, Vuforia's coordinate system is initialized relative to the phone’s starting camera position. This means if the app is launched while the player is standing, the virtual ground plane appears at eye level. 
 
-To resolve this, we introduced a dedicated floor image target placed in the real world and set **Vuforia’s World Center Mode** to `SPECIFIC_TARGET`. This ensures that Unity’s world origin aligns with the physical floor, allowing for accurate placement of the snow bomb effects. The imaged for floor reference is a QR code which can be found [here](images/floor_qr.jpg).
+To resolve this, we introduced a dedicated floor image target placed in the real world and set **Vuforia’s World Center Mode** to `SPECIFIC_TARGET`. This ensures that Unity’s world origin aligns with the physical floor, allowing for accurate placement of the snow bomb effects. The image for floor reference is a QR code which can be found [here](images/floor_qr.jpg).
 
 ### 🎯 Reticle Pointer
 The reticle pointer was adapted from the Google Cardboard plugin and serves as a visual indicator of **whether the opponent is currently in sight**. 
@@ -65,7 +65,7 @@ Each player must tap a `Connect` button in the UI to initiate the MQTT connectio
 | ----- | ------- | ------------ |
 | `viz/trigger`	| Triggers an action execution | `<PLAYER_NO><ACTION_NO>` | 
 | `viz/visibility`	|  Informs visibility state |  `<PLAYER_NO><OPPONENT_VISIBILITY>` | 
-| `backend/state`	| Overall state updates from backend | 
+| `backend/state`	| Overall state updates from backend | `<PACKET_NO> <P1_HP><P1_BULLETS><P1_BOMB><P1_SHIELDHP><P1_DEATH><P1_SHIELD> <P2_HP><P2_BULLETS><P2_BOMB><P2_SHIELDHP><P1_DEATH><P2_SHIELD>` | 
 | `backend/ready`	| Signals readiness of backend or players | *empty payload*
 
 #### 🎯 Action Dispatch
